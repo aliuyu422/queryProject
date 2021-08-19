@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left"></div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">综合呈现</h1>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div class="ub-img icon-exit umw2 umh4"></div>
+                </div>
+            </div>
+            <div style="width: 100%;height: 50;">
+                &nbsp;
+            </div>
+            <table width='100%' style='vertical-align:middle; text-align:center;'>
+                <td style="width: 33%">
+                <div class='metro ub-f1' data-name="zycx" data-url="report_list.html">
+                    <img src="css/current_icon/icon_xunjian.png" height="65" width="65" />
+                    <div class="font-p">
+                        <font size="1.5">资源报表</font>
+                    </div>
+                </div></td>
+                <td style="width: 33%">
+                <div class='metro ub-f1' data-name="zygl" data-url="zycx_index.html">
+                    <img src="css/current_icon/icon_zyhc.png"  height="65" width="65"/>
+                    <div class="font-p">
+                        <font size="1.5">资源查询</font>
+                    </div>
+                </div></td>
+                <td style="width: 34%">&nbsp;</td>
+                </tr>
+            </table>
+            <!--header结束--><!--content开始-->
+            <!--content结束-->
+
+        </div>
+        <script src="js/req.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+    var userAccout = "";
+    var passWord = "";
+        appcan.ready(function() {
+            uexWidget.onLoadByOtherApp = onLoadByOtherApp;
+            var titHeight = $('#header').offset().height;
+            var appName = "综合呈现";
+            console.log(appName);
+            uexWindow.toast(1, 5, "正在获取授权信息...", 2000);
+        });
+        function onLoadByOtherApp(jsonData){
+            // alert("jsonData"+jsonData);
+            openResDetailWin(jsonData);
+        };
+        function openResDetailWin(jsonStr){
+            // alert(jsonStr);
+            jsonStr = jsonStr.replace(/^\{/gi,"");
+            // alert(jsonStr);
+            jsonStr = jsonStr.replace(/\}$/gi,"");
+            // alert(jsonStr);
+            jsonStr = jsonStr.replace(/\"/g,"");
+            // alert(jsonStr);
+            var jsonArray = jsonStr.split(',');
+            // alert(jsonArray.length);
+            for (var i=0; i < jsonArray.length; i++){
+                var jsonNext = jsonArray[i].split(":");
+                if(jsonNext[0] == 'account'){
+                   userAccout = jsonNext[1];
+                };
+            };
+            uexWindow.toast(1, 5, "正在查询资源对象...", 25000);
+             req.req_func.loginByName(userAccout, passWord, function(data) {
+                if (data.success == 'true') {
+                    uexWindow.closeToast();
+                    appcan.locStorage.setVal(req.locfield.useraccount, userAccout);
+                    appcan.locStorage.setVal(req.locfield.userCity, data.orgname);
+                    var plat = uexWidgetOne.getPlatform();//0为iOS,1为Android
+                    if(plat == 0){
+                        appcan.locStorage.setVal("appid", "82102");
+                    }else{
+                        appcan.locStorage.setVal("appid", "82108");
+                    }
+                    appcan.button(".metro", "ani-act", function() {
+                        var service = req.url.genReportsByPid + "0";
+                        appcan.setLocVal("report.current.service", service);
+                        appcan.setLocVal("report.current.title", "资源报表");
+                        appcan.window.open($(this).data("name"), $(this).data("url"), 10);
+                    })
+                } else {
+                    appcan.window.alert('提示', '登陆失败');
+                }
+            }, function(e) {
+                    uexWindow.closeToast();
+                    //alert(e);
+                    var responseText = e.responseText;
+                    if(responseText)
+                    {
+                        try{
+                            var x = eval('(' + responseText + ')');
+                            if(x && x.success && x.success == 'false')
+                            {
+                                alert("用户登陆失败：" + x.message);
+                            }
+                        }
+                        catch(ex)
+                        {}
+                    }
+            });
+        }
+        appcan.button(".metro", "ani-act", function() {
+            var service = req.url.genReportsByPid + "0";
+            appcan.setLocVal("report.current.service", service);
+            appcan.setLocVal("report.current.title", "资源报表");
+            appcan.window.open($(this).data("name"), $(this).data("url"), 10);
+        })
+        appcan.button(".nav-btn", "btn-act", function() {
+            this.id == "nav-right" && uexWidgetOne.exit(0);
+        });
+    </script>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <style>  
+.tb_1   {float:left;border-right:1px   solid   #FFFFFE; padding:5px;width: 35%;}  
+.tb_2   {float:left; padding:5px;}  
+</style> 
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div>
+            <!--内容 -->
+            <div class="sc-bg" id="listview1">
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            appcan.initBounce();
+        })
+        var setData = [];
+        var data = appcan.locStorage.getVal(req.locfield.resItemInfo);
+        //console.log(data);
+        if(data){
+            data = (JSON.parse(data)).relationList;
+            for (var i=0; i < data.length; i++) {
+              data[i].title = data[i].name+' ('+data[i].showvalue+')';
+              setData.push(data[i]);
+            };
+        }
+        var lv1 = appcan.listview({
+            selector : "#listview1",
+            type : "thickLine",
+            hasIcon : true,
+            hasAngle : true,
+            multiLine : 1,
+            align : 'left'
+        });
+        lv1.set(setData);
+        lv1.on('click',function(obj ,data ,subObj ){
+            if(data.showvalue){
+                if(data.showvalue =='0')return;
+                appcan.locStorage.setVal(req.locfield.resclassname,data.related_class);
+                if(/^[0-9]+$/.test(data.showvalue)){
+                    //如果有值并且是数值时,跳转至列表页面
+                    current.resListInfo.setReqParam({
+                        'ResClassName':data.related_class,
+                        'pageStart':0,'pageSize':10,
+                        'related_attr':data.related_attr,
+                        'attri_value':data.attr_value
+                    });
+                   current.resListInfo.load(false,function(){
+                       appcan.window.open("res_listView"+(new Date().getTime()),"zycx_res_listView.html",1,0);
+                   },null);
+                }else{
+                    //跳转至详情页面
+                    //alert(data.attr_value);
+                    appcan.locStorage.setVal(req.locfield.resItemId,data.attr_value);
+                    appcan.window.open("res_detail"+(new Date().getTime()),"zycx_res_detail.html",1,0);
+                    //uexWindow.reload();
+                }
+            }
+        });
+    </script>
+</html>

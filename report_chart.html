@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        
+        <div id="echarsv" style="height:500px;padding-top: 10px;padding-left: 5px;padding-right: 5px;"></div>
+        
+        <script src="js/echarts-all.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+    var myChart = echarts.init(document.getElementById('echarsv'));
+    var titletext = appcan.getLocVal("report.current.title");
+    var cityid_fldn = "COUNTY";
+    var reportDefine = {};
+    
+    String.prototype.endWith=function(str){  
+        if(str==null||str==""||this.length==0||str.length>this.length)  
+          return false;  
+        if(this.substring(this.length-str.length)==str)  
+          return true;  
+        else  
+          return false;  
+        return true;  
+    }
+    
+    function refreshData(){
+        var selSiteInfo = appcan.getLocVal("report.parameter.siteInfo");
+        var dateType = appcan.getLocVal("report.parameter.datetype");
+        var selCity = appcan.getLocVal("report.parameter.city");
+        var beginDate = appcan.getLocVal("report.parameter.begindate");
+        var endDate = appcan.getLocVal("report.parameter.enddate");
+        if(dateType == "M")
+        {
+            beginDate = beginDate.substring(0,7);
+        }
+        if(selCity == "省公司")
+        {
+            selCity = "";
+        }
+        var queryParam = {
+            city_id: selCity,
+            country: selCity,
+            date_type: dateType,
+            start_date: beginDate,
+            end_date: endDate,
+            info1: selSiteInfo,
+            is_init_load: false 
+        };
+        
+        $("echarsv").empty();
+        myChart = echarts.init(document.getElementById('echarsv'));
+        setOption(queryParam);
+    }
+    
+    String.prototype.startWith=function(str){  
+        if(str==null||str==""||this.length==0||str.length>this.length)  
+          return false;  
+        if(this.substr(0,str.length)==str)  
+          return true;  
+        else  
+          return false;  
+        return true;  
+    }  
+    
+    function setOption(param){
+        var columns = reportDefine.kendoGrid.listColumns;
+        var serviceUrl = reportDefine.rptTable.servicename;
+        if(param != null)
+        {
+            var query = JSON.stringify(param);
+            serviceUrl = serviceUrl.split("?")[0] + "?param=" + query;
+        }
+        else
+        {
+            //初始加载的默认参数：用户所属地市、当前月
+            var date = new Date;
+            var year = date.getFullYear();
+            var month = parseInt(date.getMonth()) + 1;
+            var dateType = "M";
+            var selCity = appcan.getLocVal(req.locfield.userCity);
+            var monthStr = month;
+            if(month < 10)
+            {
+                monthStr = "0" + month;
+            }
+            var beginDate = year + "-" + monthStr;
+            if(selCity == undefined || selCity == null || selCity == "省公司")
+            {
+                selCity = "";
+            }
+            var queryParam = {
+                city_id: selCity,
+                country: selCity,
+                date_type: dateType,
+                start_date: beginDate,
+                end_date: "",
+                info1: "高铁",
+                is_init_load: true
+            };
+                    
+            var query = JSON.stringify(queryParam);
+            serviceUrl = serviceUrl.split("?")[0] + "?param=" + query;
+        }
+        //serviceUrl = serviceUrl.replace('113.59.110.83:9002','10.21.16.51:9002');
+        uexWindow.toast(1, 5, "正在获取数据...", 60000);
+        //console.log(serviceUrl);
+        $.ajax({
+            type : "GET",
+            url : serviceUrl,
+            dataType : "json",
+            success : function(reportData) {              
+                var yAxisData = [];
+                var seriesList = [];
+                var legend = [];
+                for(var i = 0; i < columns.length; i++)
+                {
+                    var columnDef = columns[i];
+                    if((columnDef.type == 'int' || columnDef.type == 'double') && (columnDef.title != '分公司' && columnDef.title != '地市'))
+                    {
+                        seriesList.push({
+                            name: columnDef.title,
+                            field: columnDef.field,
+                            type: 'bar',
+                            data: []
+                        });
+                    }
+                    else if(columnDef.type == 'string' && (columnDef.title.startWith('分公司') || columnDef.title == '地市'))
+                    {
+                        cityid_fldn = columnDef.field;
+                    }
+                }
+                
+                for(var k = 0; k < seriesList.length; k++)
+                {
+                     legend.push(seriesList[k].name);
+                }
+                    
+                for(var i = 0; i < reportData.length; i++)
+                {
+                    var record = reportData[i];
+                    yAxisData.push(record[cityid_fldn]);
+                    for(var k = 0; k < seriesList.length; k++)
+                    {
+                        var serial = seriesList[k];
+                        var field = serial.field;
+                        var dataArr = serial.data;
+                        dataArr.push(record[field]);
+                    }
+                }
+                
+                // 指定图表的配置项和数据
+                var option = {
+                    tooltip : {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data:legend
+                    },
+                    calculable : true,
+                    xAxis: [
+                        {
+                            type : 'category',
+                            data : yAxisData
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type : 'value',
+                            splitArea : {show : true}
+                        }
+                    ],
+                    series: seriesList
+                };
+                
+                uexWindow.closeToast();
+        
+                //加载图
+                myChart.setOption(option);
+                myChart.refresh();
+                //alert("chart updated");
+            }
+        });
+    }   
+            
+    function loadChart(){
+        var id = appcan.getLocVal("report.current.id");
+        $.ajax({
+            type : "GET",
+            url : req.url.genReport + id,
+            dataType : "json",
+            success : function(data) {
+                // uexWindow.closeToast();
+                reportDefine = data;
+                setOption();
+            }
+        });
+    }
+        
+        
+        appcan.ready(function() {
+            //appcan.initBounce();
+            loadChart();
+            appcan.window.subscribe('2',refreshData);
+            //禁止响应控件滑动事件
+            //uexWindow.setMultilPopoverFlippingEnbaled(1);
+        });
+        
+        window.onresize = function() {
+            myChart.resize();
+        }
+    </script>
+</html>

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <style>  
+.tb_1   {float:left;border-right:1px   solid   #FFFFFE; padding:5px;width: 35%;}  
+.tb_2   {float:left; padding:5px;word-break: break-all;}  
+</style> 
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="header" class="uh bc-text-head ub bc-head head-p">
+            <div class="nav-btn" id="nav-left">
+                <div class="fa fa-angle-left fa-2x"></div>
+            </div>
+            <h1 id="title" class="ut ub-f1 ulev-3 ut-s tx-c" >告警详情</h1>
+            <div class="nav-btn nav-bt" id="nav-right"></div>
+            <!--
+            <div class="nav-btn" id="nav-right">
+                <div class="ub-img icon-setting umw2 umh4"></div>
+            </div>
+            -->
+        </div>
+        <div>
+            <!--内容 -->
+            <div class="sc-bg" id="listview">
+            </div>
+        </div>
+        <div class="umh1"></div>
+        <div class="uin uinn">
+            <div class="ub btn bc-text-head bc-btn ub-ac ub-pc" id="btnOK" style="display: none;">
+                <b>IPRNAN排障</b>
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script>
+        <script src="js/ajaxhook.min.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        var setData = [];
+        var data = window.localStorage.getItem('iprnan_alarm_info');
+        var columnData = window.localStorage.getItem('iprnan_alarm_column_info');
+        var currentId = window.localStorage.getItem('iprnan_alarm_current_id');
+        var neName = "";
+        var neVendorName = "";
+        var nePortName = "";
+        var city = "";
+        var zNeName = "";
+        var zNePortName = "";
+        $(document).ready(function() {
+        // appcan.ready(function() {
+            
+            // appcan.initBounce();
+            var alarmNeName = window.localStorage.getItem('iprnan_alarm_ne');
+            $("#title").html(alarmNeName+"告警详情");
+            
+            req.ajax_hook(window.localStorage.getItem("report.sub.current.id"), alarmNeName+"告警详情");
+            
+            if(data && columnData){
+                data = JSON.parse(data);
+                columnData = JSON.parse(columnData);
+                for (var i=0; i < columnData.length; i++) {
+                  setData.push({
+                      describe : "<div class=\"width:100%\"><div class=\"tb_1\">"+columnData[i].title+"</div><div class=\"tb_2\">"+(data[columnData[i].field] ? data[columnData[i].field] : "")+"</div></div>"
+                  });
+                };
+            }
+            var lv1 = appcan.listview({
+                selector : "#listview",
+                type : "thickLine",
+                hasIcon : true,
+                hasAngle : false,
+                hasSubTitle : true,
+                multiLine : 1,
+                hasCheckbox : false,
+                align : 'left'
+            });
+            lv1.set(setData);
+            
+            // appcan.window.openToast("请稍后...",null,'middle',1);
+            if(currentId == "4079"){
+                $.ajax({
+                    url : req.url.ipRanPortInfo,
+                    type : 'GET',
+                    dataType: 'json',
+                    timeout:req.timeout,
+                    data : {
+                        "nename": data.NENAME,
+                        "locatenename": data.LOCATENENAME
+                    },
+                    success : function(ret) {
+                        // appcan.window.closeToast();
+                        neName = ret.NENAME;
+                        neVendorName = ret.VENDOR;
+                        nePortName = ret.PORTNAME;
+                        initDone();
+                    },
+                    error : function(e) {
+                        // appcan.window.closeToast();
+                        console.log(e);
+                    }
+                });
+            } else if(currentId == "5051"){
+                $("#btnOK").html("线路诊断");
+                $.ajax({
+                    url : req.url.ipRanPortInfo,
+                    type : 'GET',
+                    dataType: 'json',
+                    timeout:req.timeout,
+                    data : {
+                        "nename": data.NENAME,
+                        "locatenename": data.LOCATENENAME
+                    },
+                    success : function(ret) {
+                        // appcan.window.closeToast();
+                        neName = ret.NENAME;
+                        neVendorName = ret.VENDOR;
+                        nePortName = ret.PORTNAME;
+                        initDone();
+                    },
+                    error : function(e) {
+                        // appcan.window.closeToast();
+                        console.log(e);
+                    }
+                });
+            }else if(currentId == "5041"){
+                $("#btnOK").html("线路诊断");
+                $.ajax({
+                    url : req.url.ipRanPortInfo,
+                    type : 'GET',
+                    dataType: 'json',
+                    timeout:req.timeout,
+                    data : {
+                        "nename": data.NENAME,
+                        "locatenename": data.LOCATENENAME
+                    },
+                    success : function(ret) {
+                        // appcan.window.closeToast();
+                        neName = ret.NENAME;
+                        neVendorName = ret.VENDOR;
+                        nePortName = ret.PORTNAME;
+                        initDone();
+                    },
+                    error : function(e) {
+                        // appcan.window.closeToast();
+                        console.log(e);
+                    }
+                });
+            }else if(currentId == "5053"){
+                $.ajax({
+                    url : req.url.ipRanPortInfo,
+                    type : 'GET',
+                    dataType: 'json',
+                    timeout:req.timeout,
+                    data : {
+                        "nename": data.NENAME,
+                        "locatenename": data.LOCATENENAME
+                    },
+                    success : function(ret) {
+                        // appcan.window.closeToast();
+                        neName = ret.NENAME;
+                        neVendorName = ret.VENDOR;
+                        nePortName = ret.PORTNAME;
+                        initDone();
+                    },
+                    error : function(e) {
+                        // appcan.window.closeToast();
+                        console.log(e);
+                    }
+                });
+            }else if(currentId == "5049"){
+                $.ajax({
+                    url : req.url.ipRanPortInfo,
+                    type : 'GET',
+                    dataType: 'json',
+                    timeout:req.timeout,
+                    data : {
+                        "nename": data.NENAME,
+                        "locatenename": data.LOCATENENAME
+                    },
+                    success : function(ret) {
+                        // appcan.window.closeToast();
+                        neName = ret.NENAME;
+                        neVendorName = ret.VENDOR;
+                        nePortName = ret.PORTNAME;
+                        initDone();
+                    },
+                    error : function(e) {
+                        // appcan.window.closeToast();
+                        console.log(e);
+                    }
+                });
+            }else if(currentId == "5042"){
+                $.ajax({
+                    url : req.url.ipRanPortInfo,
+                    type : 'GET',
+                    dataType: 'json',
+                    timeout:req.timeout,
+                    data : {
+                        "nename": data.A_NAME,
+                        "locatenename": data.A_PORT
+                    },
+                    success : function(ret) {
+                        // appcan.window.closeToast();
+                        neName = ret.NENAME;
+                        neVendorName = ret.VENDOR;
+                        nePortName = ret.PORTNAME;
+                        city = ret.CITY;
+                        $.ajax({
+                            url : req.url.ipRanPortInfo,
+                            type : 'GET',
+                            dataType: 'json',
+                            timeout:req.timeout,
+                            data : {
+                                "nename": data.B_NAME,
+                                "locatenename": data.B_PORT
+                            },
+                            success : function(ret_port) {
+                                // appcan.window.closeToast();
+                                zNeName = ret_port.NENAME;
+                                zNePortName = ret_port.PORTNAME;
+                                if(!neVendorName){
+                                    neVendorName = ret_port.VENDOR;
+                                }
+                                if(!city){
+                                    city = ret_port.CITY;
+                                }
+                                initDone();
+                            },
+                            error : function(e) {
+                                // appcan.window.closeToast();
+                                console.log(e);
+                            }
+                        });
+                    },
+                    error : function(e) {
+                        // appcan.window.closeToast();
+                        console.log(e);
+                    }
+                });
+            }
+        });
+        
+        // appcan.button(".nav-btn", "ani-act", function() {
+        //     if (this.id == "nav-left") {
+        //         appcan.window.close(-1);
+        //     }
+        // });
+        // 返回上一级的事件
+        var back = document.getElementById("nav-left");
+        back.onclick = function () {
+            window.history.back(-1);
+        }
+
+        function initDone(){
+            $("#btnOK").show();
+            $("#btnOK").click(function(){
+                var operateUrl = "";
+                if(currentId == "4079"){
+                    //1、数据库未匹配网元，跳转到网元输入
+                    //2、取得网元、未取得端囗，跳转到端囗选择
+                    //3、取得网元+端囗，跳转到命令选择
+                    // var operateUrl = req.url.iprnanOperate + '?username='+window.localStorage.getItem(req.locfield.useraccount);
+                    operateUrl = req.url.iprnanOperate + '?username=hnnms';
+                    operateUrl += "&compname=" + (data.ALARMCOUNTY ? data.ALARMCOUNTY : "");
+                    if(neName){
+                        operateUrl += "&vendorname=" + neVendorName;
+                        operateUrl += "&nename=" + neName;
+                    }
+                    if(nePortName){
+                        operateUrl += "&port=" + nePortName;
+                    }
+                }else if(currentId == "5051"){
+                    //1、数据库未匹配网元，跳转到网元输入
+                    //2、取得网元、未取得端囗，跳转到端囗选择
+                    //3、取得网元+端囗，跳转到命令选择
+                    // var operateUrl = req.url.iprnanOperate + '?username='+window.localStorage.getItem(req.locfield.useraccount);
+                    // operateUrl = req.url.iprnanOperate + '?username=hnnms';
+                    // operateUrl += "&compname=" + (data.ALARMCOUNTY ? data.ALARMCOUNTY : "");
+                    // if(neName){
+                        // operateUrl += "&vendorname=" + neVendorName;
+                        // operateUrl += "&nename=" + neName;
+                    // }
+                    // if(nePortName){
+                        // operateUrl += "&port=" + nePortName;
+                    // }
+                    // var operateUrl = req.url.iprnanLineDiagnose + '?';
+                    // if(neName){
+                        // operateUrl += "type_info=" + neName;
+                        // operateUrl += "&nename_cond_info=" + '海口的';
+                    // }
+                    var operateUrl = req.url.iprnanLineDiagnose + '?';
+                    operateUrl += "type_info=" + '网元名称';
+                    operateUrl += "&nename_cond_info=" + data.NENAME;
+                    console.log(operateUrl);     
+                }else if(currentId == "5041"){
+                    //IPRAN传输开环与中断呈现
+                    //1、数据库未匹配网元，跳转到网元输入
+                    //2、取得网元、未取得端囗，跳转到端囗选择
+                    //3、取得网元+端囗，跳转到命令选择
+                    // var operateUrl = req.url.iprnanOperate + '?username='+window.localStorage.getItem(req.locfield.useraccount);
+                    // operateUrl = req.url.iprnanOperate + '?username=hnnms';
+                    // operateUrl += "&compname=" + (data.EFFECTAREA ? data.EFFECTAREA : "");
+                    // operateUrl += "&vendorname=" + (data.VENDER ? data.VENDER : "");
+                    // var NeName = window.localStorage.getItem('iprnan_alarm_ne');
+                    // operateUrl += "&nename=" + NeName;
+                    var operateUrl = req.url.iprnanLineDiagnose + '?';
+                    operateUrl += "type_info=" + '网元名称';
+                    operateUrl += "&nename_cond_info=" + data.NENAME;
+                    console.log(operateUrl);
+                }else if(currentId == "5053"){
+                    //1、数据库未匹配网元，跳转到网元输入
+                    //2、取得网元、未取得端囗，跳转到端囗选择
+                    //3、取得网元+端囗，跳转到命令选择
+                    // var operateUrl = req.url.iprnanOperate + '?username='+window.localStorage.getItem(req.locfield.useraccount);
+                    operateUrl = req.url.iprnanOperate + '?username=hnnms';
+                    operateUrl += "&compname=" + (data.ALARMCOUNTY ? data.ALARMCOUNTY : "");
+                    if(neName){
+                        operateUrl += "&vendorname=" + neVendorName;
+                        operateUrl += "&nename=" + neName;
+                    }
+                    if(nePortName){
+                        operateUrl += "&port=" + nePortName;
+                    }
+                }else if(currentId == "5049"){
+                    //1、数据库未匹配网元，跳转到网元输入
+                    //2、取得网元、未取得端囗，跳转到端囗选择
+                    //3、取得网元+端囗，跳转到命令选择
+                    // var operateUrl = req.url.iprnanOperate + '?username='+window.localStorage.getItem(req.locfield.useraccount);
+                    operateUrl = req.url.iprnanOperate + '?username=hnnms';
+                    operateUrl += "&compname=" + (data.ALARMCOUNTY ? data.ALARMCOUNTY : "");
+                    operateUrl += "&vendorname=" + (data.MAINTAINDETP ? data.MAINTAINDETP : "");
+                    operateUrl += "&nename=" + (data.NENAME ? data.NENAME : "");
+                    // if(neName){
+                        // operateUrl += "&vendorname=" + neVendorName;
+                        // operateUrl += "&nename=" + neName;
+                    // }
+                    // if(nePortName){
+                        // operateUrl += "&port=" + nePortName;
+                    // }
+                }else if(currentId == "5042"){
+                    operateUrl = req.url.iprnanOperate + '?username=hnnms';
+                    operateUrl += "&compname=" + city + "&vendorname=" + neVendorName;
+                    if(neName){
+                        operateUrl += "&nename=" + neName;
+                    }
+                    if(nePortName){
+                        operateUrl += "&port=" + nePortName;
+                    }
+                    if(zNeName){
+                        operateUrl += "&z_nename=" + zNeName;
+                    }
+                    if(zNePortName){
+                        operateUrl += "&z_port=" + zNePortName;
+                    }
+                }
+                window.localStorage.setItem('iprnan_operate_url', operateUrl);
+                // appcan.window.open({
+                //    name:"iprnan_alarm_operate",
+                //    data:"iprnan_alarm_operate.html",
+                //    aniId :'10' 
+                // });
+                window.open("iprnan_alarm_operate.html","_self");
+            });
+        }
+        
+    </script>
+</html>

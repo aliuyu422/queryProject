@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <!-- <link rel="stylesheet" href="css/my-style.css">
+        <link rel="stylesheet" href="css/common.css"> -->
+    </head>
+    <body class="um-vp sc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <div style="padding:.5em .5em;">
+                <div style="padding-top: .5em;font-weight: bold">
+                    事件基本信息：
+                </div>
+                <div class="ub-f1 ub ub-ver bc-mabg up-top sc-border-t us2-b">
+                    <div class=" umar-top bc1-bg">
+                        <div id="listview"></div>
+                    </div>
+                </div>
+                <div style="padding-top: .5em;font-weight: bold;padding-bottom: 0.5em">
+                    断站原因编辑：
+                </div>
+                 <div class="ub ub-ac umh5 bc-border ">
+                     <div class=" uinput ub ub-f1">
+                        <div class="uinn"><span>更新人员姓名</span></div> 
+                        <input type="text" class="umw4 ub-f1 bc-border" id="updateName" style="background: white"disabled="disabled">
+                    </div>
+                 </div>
+                 <div class="ub ub-ac umh1 bc-border ">
+                    <div class=" uinput ub ub-f1">
+                        <div class="uinn"><span>更新人员单位</span></div>
+                        <input type="text" class="umw4 ub-f1 bc-border" id="updateAddress" style="background: white"disabled="disabled">
+                    </div>
+                 </div>
+                 <div class="ub ub-ac umh5 bc-border ">
+                    <div class=" uinput ub ub-f1">
+                        <div class="ub ub-ac uinn3">
+                           <div class="uinn"><span>专业类别</span></div>
+                            <div id="dsdiv" class="ub-f1 uc-ac sc-bg sel"style="width: 13.5em;" >
+                                <div class="select ub uba1 uc-a1 uba1 bc-border bc-text"style="background: #FFFFFF">
+    
+                                    <div class="text" id="professionalSel">
+                                        请选择
+                                    </div>
+    
+                                    <div class="icon"></div>
+    
+                                    <select  id="updateProfessional" >
+                                    </select>
+    
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+                  <div class="ub ub-ac umh5 bc-border ">
+                    <div class=" uinput ub ub-f1">
+                        <div class="ub ub-ac uinn3">
+                           <div class="uinn"><span>原因类别</span></div>
+                            <div id="dsdiv" class="ub-f1 uc-ac sc-bg sel"style="width: 13.5em;" >
+                                <div class="select ub uba1 uc-a1 uba1 bc-border bc-text"style="background: #FFFFFF">
+    
+                                    <div class="text" id="reasonSel">
+                                        请选择
+                                    </div>
+    
+                                    <div class="icon"></div>
+    
+                                    <select  id="updateReason" >
+                                    </select>
+    
+                                </div>
+                            </div>
+                        </div>
+                     </div>
+                 </div>
+                <div class="uinn">
+                    <div style="padding-top: .5em;font-weight: bold;padding-bottom: 0.5em">
+                断站原因
+                    </div>
+                    <div class="uba bc-border uinput ub ub-f1 bc1-bg">
+                        <textarea placeholder="请输入断站原因" type="text" class="ub-f1"id="sugesition"></textarea>
+                    </div>
+                </div>
+                <div class="uin" style="padding-top: 1em">
+                    <div class="ub btn bc-text-head bc-btn ub-ac ub-pc tx_zt_child uc-a1 bc-head uba b-bla uinn2 c-blu c-m1 uc-a t-wh" style="color: white;"  onclick="sureSubmit()" >
+                        <span class="fa fa-check-circle" >确&nbsp;&nbsp;定&nbsp;&nbsp;添&nbsp;&nbsp;加</span>
+                    </div>
+                </div>
+            </div>  
+        </div>
+        <script src="js/ajaxhook.min.js"></script>
+        <script src="js/req.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script>
+    </body>
+    <script>
+    var serialno = "";
+    var annotation= "";
+    var professional = "";
+    var reasonType = "";
+    var userId = "";
+    var userAddress = "";
+    var flowList = [];
+    var professional = '';
+    var selCity = '';
+    //getProfessional  专业类别
+    //getreasonType  原因类别
+        appcan.ready(function(){
+            
+            req.ajax_hook(appcan.getLocVal("report.sub.current.id"), "断站原因注释");
+            
+            serialno = appcan.getLocVal("serialno");
+            userId = appcan.locStorage.getVal(req.locfield.useraccount);
+            userAddress = appcan.locStorage.getVal(req.locfield.userCity);
+            selCity = appcan.getLocVal("report.sub.parameter.city");
+            $("#updateName").val(userId);
+            $("#updateAddress").val(userAddress);
+            showReasonList();
+            selectProfessional();
+            // selectReason();
+        });
+         function selectReason(){
+             $("#updateReason").empty();
+             $.ajax({
+                type : "GET",
+                url :  req.url.getReasonType+ encodeURI(JSON.stringify({
+                          "professional":professional
+                        })),
+                dataType : "json",
+                success : function(data){
+                            showSelectReasonType(data);
+                        },
+                error:function(){
+                    uexWindow.closeToast();
+                    appcan.window.openToast("加载数据失败,请检查网络", 1000, 5, 0);
+                }
+             });
+        }
+        function showSelectReasonType(objRtype){
+            if (objRtype.length > 0) {
+                 uexWindow.closeToast();
+                 $("#updateReason").append("<option value=''>请选择</option>");
+                for (var i=0; i < objRtype.length; i++) {
+                   var Reason = objRtype[i];
+                   $("#updateReason").append("<option value='" + Reason.ID + "'>" + Reason.NAME + "</option>");
+                };
+            }else{
+                 uexWindow.closeToast();
+                 appcan.window.openToast("工单没有原因类别信息", 5000, 5, 0);
+             };
+        }
+        function selectProfessional(){
+             $("#updateProfessional").empty();
+             $.ajax({
+                type : "GET",
+                url :  req.url.getProfessional,
+                dataType : "json",
+                success : function(data){
+                          showSelectProfessional(data);
+                            
+                        },
+                error:function(){
+                    uexWindow.closeToast();
+                    appcan.window.openToast("加载数据失败,请检查网络", 1000, 5, 0);
+                }
+             });
+        }
+        function showSelectProfessional(objPtl){
+            if (objPtl.length > 0) {
+                 uexWindow.closeToast();
+                 $("#updateProfessional").append("<option value=''>请选择</option>");
+                for (var i=0; i < objPtl.length; i++) {
+                   var Professional = objPtl[i];
+                   $("#updateProfessional").append("<option value='" + Professional.NAME + "'>" + Professional.NAME + "</option>");
+                };
+            }else{
+                 uexWindow.closeToast();
+                 appcan.window.openToast("工单没有告警设备信息", 5000, 5, 0);
+             };
+        }
+        $("#updateProfessional").change(function(){
+          var updateProfessional = $("#updateProfessional").val();
+          if(updateProfessional == ""){
+               $("#updateReason").html("请选择");
+          }else if(updateProfessional == "传输专业"){
+              professional = updateProfessional;
+              selectReason();
+          }else if(updateProfessional == "无线专业"){
+              professional = updateProfessional;
+              selectReason();
+          }else if(updateProfessional == "市电故障"){
+              professional = updateProfessional;
+              selectReason();
+          }else if(updateProfessional == "其他"){
+              professional = updateProfessional;
+              selectReason();
+          }
+        })
+         function showReasonList(){
+             appcan.window.openToast("正在加载数据,请等待...",2000,5,0);
+             $.ajax({
+                type : "GET",
+                url : req.url.getReasonDetail +encodeURI(JSON.stringify({"serialno":serialno})),
+                dataType : "json",
+                success : function(data) {
+                    uexWindow.closeToast();
+                      showLineListview(data);
+                },
+                error : function(){
+                            uexWindow.closeToast();
+                            appcan.window.openToast("加载数据失败,请检查网络",1000,5,0);
+                        
+                        }
+            });
+        };
+        function uuid() {
+            var s = [];
+            var hexDigits = "0123456789abcdef";
+            for (var i = 0; i < 36; i++) {
+                s[i] = hexDigits.substr(Math.floor(Math.random() * 0x10), 1);
+            }
+            s[14] = "4"; // bits 12-15 of the time_hi_and_version field to 0010
+            s[19] = hexDigits.substr((s[19] & 0x3) | 0x8, 1); // bits 6-7 of the clock_seq_hi_and_reserved to 01
+            s[8] = s[13] = s[18] = s[23] = "-";
+        
+            var uuid = s.join("");
+            return uuid;
+        }
+        function showLineListview(rootResult){
+             var listviewshow = $("#listview").html();
+             if (listviewshow!="") {
+                $("#listview").empty();
+             }
+              if (rootResult.length>0) {
+                for(var i=0;i<rootResult.length ;i++){
+                    var item = rootResult[i];
+                    var uid = uuid();
+                    flowList[uid] = item;
+                    if(item.has == 'true'){
+                        var str = '';
+                        if(i==rootResult.length-1 || rootResult.length==1){
+                            str += '<div class="uc-a uba b-gra ub ub-ver c-wh bc1-bg">';
+                        } else {
+                            str += '<div class="uc-a uba b-gra ub ub-ver c-wh bc1-bg">';
+                        }
+                          str += '<div class="uinntp ub-f1 bc-text-gra1 ub ub-pj"style="background:#FFFFFF;">'
+                            +'<div class="bc-text-bla font_w bc-text"style="width:40%;height="0.5em;margin-left: 1em;" >修改人员姓名:'
+                            +'</div>'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:60%;" >'+
+                            item.OWER_NAME
+                            +'</div>'
+                            +'</div>'
+                            
+                            +'<div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:40%;height="0.5em;margin-left: 1em;" >修改人员单位:'
+                            +'</div>'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:60%;" >'+
+                            item.DEPT
+                            +'</div>'
+                            +'</div>'
+                            
+                            +'<div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:40%;height="0.5em;margin-left: 1em;" >专业类别:'
+                            +'</div>'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:60%;" >'+
+                            item.PROFESSIONAL
+                            +'</div>'
+                            +'</div>'
+                            
+                            +'<div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:40%;height="0.5em;margin-left: 1em;" >原因类别:'
+                            +'</div>'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:60%;" >'+
+                            item.REASON_TYPE
+                            +'</div>'
+                            +'</div>'
+                            
+                            +'<div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:40%;height="0.5em;margin-left: 1em;" >断站注释原因:'
+                            +'</div>'
+                            +'<div class="bc-text-bla font_w bc-text" style="width:60%;" >'+
+                            item.REASON
+                            +'</div>'
+                            +'</div>'
+                            +'</div>';
+                        var nodeDiv = document.createElement('div');
+                        nodeDiv.innerHTML = str;
+                        $("#listview").append(nodeDiv); 
+                        
+                    }else{
+                       $("#listview").html("没有查询到断站信息"); 
+                    }
+                }
+             }else{
+                 appcan.window.openToast("无更多数据",1000,5,0);
+             }
+        }
+        function sureSubmit(){
+             uexWindow.toast(1, 5, "正在提交，请等待...", 3000);
+             var reasonSelect = $("#reasonSel").html();
+             var profesSel = $("#updateProfessional").val();
+             var sugesition = $("#sugesition").val();
+             alert(reasonSelect+"+"+profesSel);
+               if (profesSel=="请选择" || profesSel == "" || profesSel == null || profesSel == undefined ) {
+                    appcan.window.openToast("请选择专业类别", 1000, 5, 0);
+                    return;
+               };
+               if (reasonSelect=="请选择" || reasonSelect == "" || reasonSelect == null || reasonSelect == undefined) {
+                    appcan.window.openToast("请选择原因类别", 1000, 5, 0);
+                    return;
+               };
+               if (sugesition == "") {
+                   appcan.window.openToast("断站原因不能为空，请填写处理意见",2000,5,0);
+                   return;
+               };
+               $.ajax({
+                    type : "GET",
+                    url : req.url.getAlarmRecord + encodeURI(JSON.stringify({
+                          "serialno":serialno,
+                          "professional":profesSel,
+                          "owerName":userId,
+                          "reasonType":reasonSelect,
+                          "reason":sugesition,
+                          "dept" : userAddress,
+                          "country" : selCity
+                        })),
+                   dataType : "json",
+                   success : function(data){
+                       showSubmit(data);
+                   },
+                   error:function(){
+                        uexWindow.closeToast();
+                        appcan.window.openToast("加载数据失败,请检查网络", 1000, 5, 0);
+                   }
+               });
+        }
+        function showSubmit(dataResult){
+                if(dataResult.result == 'true'){
+                    appcan.window.openToast("提交成功", 3000, 5, 0);
+                    $("#updateProfessional").append("<option value=''>请选择</option>");
+                    $("#updateReason").append("<option value=''>请选择</option>");
+                    $("#sugesition").val("");
+                    
+                }else if(dataResult.result == 'false'){
+                    appcan.window.openToast("提交失败，请重新提交", 3000, 5, 0);
+                }
+        }
+        appcan.select(".select", function(ele, value) {
+            console.log(value);
+        });
+    </script>
+</html>

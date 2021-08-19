@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+
+        <div class="conbor uof ub-fv">
+            <div id="header" class="uh bc-text-head ub bc-head head-p">
+
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+
+                <h1 id="title" class="ut ub-f1 ulev-3 ut-s tx-c" >报表设置</h1>
+                <div class="nav-btn nav-bt" id="nav-right"></div>
+            </div>
+
+            <div class="consj">
+                <div class="umh1"></div>
+                <div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">
+                    <div class="bc-text-bla font_w bc-text" style="padding-left:0.6em;">
+                        统计周期：
+                    </div>
+                </div>
+                <div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">
+                    <div class="bc-text-bla font_w bc-text" style="padding-left:0.6em;">
+                        <div class="radiobox umar-r" name="">
+                            <input type="radio" class="uabs ub-con" name="datetype_radio" id="rdBoxMonth">
+                        </div>
+                    </div>
+
+                    <div class="ub-fr  bc-text " style="width: 20%;padding-top: 0.3em;">
+                        月报表
+                    </div>
+
+                    <div class="radiobox umar-r" name="">
+                        <input type="radio" class="uabs ub-con" name="datetype_radio" id="rdBoxWeek">
+                    </div>
+                    <div class="ub-fr  bc-text " style="width: 20%;padding-top: 0.3em;">
+                        周报表
+                    </div>
+
+                    <div class="radiobox umar-r" name="">
+                        <input type="radio" class="uabs ub-con" name="datetype_radio" id="rdBoxDay">
+                    </div>
+                    <div class="ub-fr  bc-text " style="width: 20%;padding-top: 0.3em;">
+                        日报表
+                    </div>
+
+                    <div class="bc-text-bla font_w bc-text" style="padding-right:0.6em;"></div>
+                </div>
+
+                <div class="umh1"></div>
+
+                <div style="">
+                    <div class="uinntp ub-f1 bc-text-gra1 ub ub-pj">
+                        <div class="bc-text-bla font_w bc-text" style="padding-left:0.6em;;padding-top: 0.3em;">
+                            开始日期：
+                        </div>
+                        <div class="ub-fr  bc-text " style="width: 70%;padding-top: 0.1em;">
+                            <div class="sc-bg-active uinput ub ub-f1  bc-border uba" style="width: 90%;">
+                                <div class="uinn fa fa-calendar sc-text"></div>
+                                <input placeholder="开始日期" type="text" class="ub-f1" id="inputBeginDate" onclick="openDateWindow('inputBeginDate');">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divEndDate"  style="">
+                    <div class="uinntp ub-f1 bc-text-gra1 ub ub-pj" style="padding-top: 0.3em;">
+                        <div class="bc-text-bla font_w bc-text" style="padding-left:0.6em;padding-top: 0.3em;">
+                            结束日期：
+                        </div>
+                        <div class="ub-fr  bc-text " style="width: 70%;padding-top: 0.1em;">
+                            <div class="sc-bg-active uinput ub ub-f1  bc-border uba" style="width: 90%;">
+                                <div class="uinn fa fa-calendar sc-text"></div>
+                                <input placeholder="结束日期" type="text" class="ub-f1" id="inputEndDate" onclick="openDateWindow('inputEndDate');">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="divCity" style="">
+                    <div class="uinntp ub-f1 bc-text-gra1 ub ub-pj" style="padding-top: 0.3em;display: none;">
+                        <div class="bc-text-bla font_w bc-text" style="padding-left:0.6em;padding-top: 0.3em;">
+                            统计地市：
+                        </div>
+                        <div class="ub-fr  bc-text " style="width: 70%;padding-top: 0.1em;">
+                            <div class="select uba bc-border bc-text" style="width: 90%;">
+                                <div id="selText" class="text">
+                                    请选择
+                                </div>
+                                <div class="icon"></div>
+                                <select id="selCity"></select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                
+                
+                <div id="divSiteInfo" style="">
+                    <div class="uinntp ub-f1 bc-text-gra1 ub ub-pj" style="padding-top: 0.3em;display: none;">
+                        <div class="bc-text-bla font_w bc-text" style="padding-left:0.6em;padding-top: 0.3em;">
+                            站点属性：
+                        </div>
+                        <div class="ub-fr  bc-text " style="width: 70%;padding-top: 0.1em;">
+                            <div class="select uba bc-border bc-text" style="width: 90%;">
+                                <div id="selSiteInfoText" class="text">
+                                    请选择
+                                </div>
+                                <div class="icon"></div>
+                                <select id="selSiteInfo">
+                                    <option value="全部">全部</option>
+                                    <option value="D类农村">D类农村</option>
+                                    <option value="传输节点">传输节点</option>
+                                    <option value="高铁">高铁</option>
+                                    <option value="乡镇覆盖">乡镇覆盖</option>
+                                    <option value="防汛">防汛</option>
+                                </select>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="umh1"></div>
+                <div class="uin uinn">
+                    <div class="ub btn bc-text-head bc-btn ub-ac ub-pc" id="btnOK" >
+                        <b>确&nbsp;&nbsp;定</b>
+                    </div>
+                </div>
+            </div>
+            <div class="audio ub-img1 uhide"></div>
+        </div>
+        <script src="js/req.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+    </body>
+    <script>
+        function openDateWindow(id) {
+            //初始化日期
+            var date = new Date;
+            var year = date.getFullYear();
+            var month = parseInt(date.getMonth()) + 1;
+            var day = date.getDate();
+            uexControl.cbOpenDatePicker = function(opId, dataType, data) {
+                var result = eval("(" + data + ")");
+                var selyear = result.year;
+                var selmonth = result.month;
+                var selday = result.day;
+                var monthStr = parseInt(selmonth);
+                if (selmonth < 10) {
+                    monthStr = "0" + monthStr;
+                }
+                var daystr = parseInt(selday);
+                if (selday < 10) {
+                    daystr = "0" + daystr;
+                }
+                $('#' + id).val(selyear + '-' + monthStr + '-' + daystr);
+            }
+            uexControl.openDatePicker(year, month, day);
+        }
+
+        // 对Date的扩展，将 Date 转化为指定格式的String
+        // 月(M)、日(d)、小时(h)、分(m)、秒(s)、季度(q) 可以用 1-2 个占位符，
+        // 年(y)可以用 1-4 个占位符，毫秒(S)只能用 1 个占位符(是 1-3 位的数字)
+        // 例子：
+        // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+        // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
+        Date.prototype.Format = function(fmt) {//author: meizz
+            var o = {
+                "M+" : this.getMonth() + 1, //月份
+                "d+" : this.getDate(), //日
+                "h+" : this.getHours(), //小时
+                "m+" : this.getMinutes(), //分
+                "s+" : this.getSeconds(), //秒
+                "q+" : Math.floor((this.getMonth() + 3) / 3), //季度
+                "S" : this.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (this.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+            if (new RegExp("(" + k + ")").test(fmt))
+                fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+        function initPage() {
+            var id = appcan.getLocVal("report.current.id");
+            var dateType = appcan.getLocVal("report.parameter.datetype");
+            var selCity = appcan.getLocVal("report.parameter.city");
+            var beginDate = appcan.getLocVal("report.parameter.begindate");
+            var endDate = appcan.getLocVal("report.parameter.enddate");
+            var selSiteInfo = appcan.getLocVal("report.parameter.siteInfo");
+            
+            if(id == "3330")
+            {
+                $("#divSiteInfo").show();
+            }
+            else
+            {
+                $("#divSiteInfo").hide();
+            }
+
+            var date = new Date;
+            var year = date.getFullYear();
+            var month = parseInt(date.getMonth()) + 1;
+            var day = date.getDate();
+
+            var monthStr = month;
+            if (month < 10) {
+                monthStr = "0" + monthStr;
+            }
+            var daystr = day;
+            if (day < 10) {
+                daystr = "0" + daystr;
+            }
+
+            if (!dateType)
+                dateType = 'M';
+            if (!selCity)
+                selCity = "";
+            if (!beginDate)
+                beginDate = year + '-' + monthStr + '-' + daystr;
+            if (!endDate)
+                endDate = "";
+                
+            if(dateType == "M" || dateType == "W")
+            {
+                $("#divEndDate").hide();
+            }
+
+            $('#inputBeginDate').val(beginDate);
+            $('#inputEndDate').val(endDate);
+            if(selSiteInfo != null && selSiteInfo != undefined && selSiteInfo != "")
+            {
+                 $('#selSiteInfo').val(selSiteInfo);
+                 $('#selSiteInfoText').html(selSiteInfo);
+            }
+        }
+
+        function initCityList() {
+            var city = appcan.getLocVal(req.locfield.userCity);
+            var citysel = document.getElementById('selCity');
+            if (city == null || city == undefined || city == "" || city == "省公司") {
+                $.ajax({
+                    url : req.url.getCityList,
+                    type : 'GET',
+                    dataType : 'json',
+                    timeout : req.timeout,
+                    success : function(data) {
+                        citysel.options.add(new Option("省公司", "省公司"));
+                        for (var i = 0; i < data.length; i++) {
+                            citysel.options.add(new Option(data[i].city, data[i].city));
+                        };
+                        $("#selText").html("省公司");
+                    }
+                });
+            } else {
+                citysel.options.add(new Option(city, city));
+            }
+        }
+
+
+        appcan.ready(function() {
+            //appcan.initBounce();
+            //refreshPage(true);
+            initPage();
+            initCityList();
+        });
+
+        appcan.button(".btn", "btn-act", function() {
+            switch (this.id) {
+            case 'btnOK':
+                var dateType = "M";
+
+                if ($("#rdBoxMonth").attr("checked")) {
+                    dateType = "M";
+                } else if ($("#rdBoxWeek").attr("checked")) {
+                    dateType = "W";
+                } else if ($("#rdBoxDay").attr("checked")) {
+                    dateType = "D";
+                }
+
+                var beginDate = $("#inputBeginDate").val();
+                var endDate = $("#inputEndDate").val();
+                var selCity = $("#selCity").val();
+                var selSiteInfo = $("#selSiteInfo").val();
+
+                appcan.setLocVal("report.parameter.city", selCity);
+                appcan.setLocVal("report.parameter.datetype", dateType);
+                appcan.setLocVal("report.parameter.begindate", beginDate);
+                appcan.setLocVal("report.parameter.enddate", endDate);
+                appcan.setLocVal("report.parameter.siteInfo", selSiteInfo);
+
+                var id = appcan.getLocVal("report.current.id");
+                appcan.window.publish('2', '');
+                //uexWindow.evaluatePopoverScript("kendo_report_" + id, "kendo_report_content", "refreshData();");
+                appcan.window.close(-1);
+                break;
+            }
+        });
+
+        appcan.button(".nav-btn", "ani-act", function() {
+            if (this.id == "nav-left") {
+                appcan.window.close(-1);
+            }
+        });
+
+        ///*
+
+        $("#rdBoxMonth").change(function() {
+            if ($("#rdBoxMonth").attr("checked")) {
+                $("#divEndDate").hide();
+            }
+        });
+
+        $("#rdBoxWeek").change(function() {
+            if ($("#rdBoxWeek").attr("checked")) {
+                var date = new Date;
+                date.setDate(date.getDate() - 7);
+                var year = date.getFullYear();
+                var month = parseInt(date.getMonth()) + 1;
+                var day = date.getDate();
+
+                var monthStr = month;
+                if (month < 10) {
+                    monthStr = "0" + monthStr;
+                }
+                var daystr = day;
+                if (day < 10) {
+                    daystr = "0" + daystr;
+                }
+
+                var beginDate = year + '-' + monthStr + '-' + daystr;
+                $('#inputBeginDate').val(beginDate);
+
+                $("#divEndDate").hide();
+            }
+        });
+
+        $("#rdBoxDay").change(function() {
+            if ($("#rdBoxDay").attr("checked")) {
+                $("#divEndDate").show();
+            }
+        });
+
+        //*/
+
+        appcan.select(".select", function(ele, value) {
+            console.log(value);
+        });
+
+    </script>
+</html>

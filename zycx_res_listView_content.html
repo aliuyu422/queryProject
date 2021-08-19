@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+                
+        <div class="ub ub-ver">
+            <div id="listview2"  class="ubt bc-border ubb c-wh umar-at1 uinn-a7">
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            //appcan.initBounce();
+            appcan.window.setBounce(1 //0:是向下拖动,1: 是向上拖动
+                ,function(){} //开始滑动时触发回调
+                ,function(){ 
+                   
+                } //上拉或者下拉超过边界执行回调
+                ,function(){
+                    current.resListInfo.load(true,function(data){
+                       appcan.window.resetBounceView(1);
+                       if(!data)return;
+                       for (var i=0; i < data.length; i++) {
+                          lv2.add([{
+                              title:data[i].ZH_NAME,
+                              int_id:data[i].INT_ID
+                          }],1);
+                       };
+                   },null);
+                } //上拉或者下拉，超过边界之后，恢复最初状态执行回调
+                ,'' //如果超过了该边界显示的背景颜色
+                ,{});
+        })
+        
+        var lv2 = appcan.listview({
+            selector : "#listview2",
+            type : "thinLine",
+            hasAngle : true,
+            multiLine : 2
+        });
+        lv2.on('click',function(obj ,data ,subObj ){
+            appcan.locStorage.setVal(req.locfield.resItemId,data.int_id);
+            appcan.locStorage.setVal(req.locfield.resCode,'');
+            appcan.locStorage.setVal(req.locfield.resItemName,data.title);
+            appcan.window.open("res_detail"+(new Date().getTime()),"zycx_res_detail.html",1,0);
+        });
+        var res_listdata = current.resListInfo.getData();
+        if(res_listdata){
+            for (var i=0; i < res_listdata.length; i++) {
+              lv2.add([{
+                  title:res_listdata[i].ZH_NAME,
+                  int_id:res_listdata[i].INT_ID
+              }],1);
+            };
+        }else{
+            lv2.set([]);
+        }
+        function reload_data(zhlabel){
+            var param = current.resListInfo.getReqParam();
+            param.zh_label = zhlabel;
+            param.pageStart = 0;
+            current.resListInfo.setReqParam(param);
+            current.resListInfo.load(false,function(data){
+               if(!data)return;
+               var sdata = [];
+               for (var i=0; i < data.length; i++) {
+                  sdata.push({
+                      title:data[i].ZH_NAME,
+                      int_id:data[i].INT_ID
+                  });
+               }
+               lv2.set(sdata);
+           },null);
+        }
+    </script>
+</html>

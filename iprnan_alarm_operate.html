@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <style>  
+.tb_1   {float:left;border-right:1px   solid   #FFFFFE; padding:5px;width: 35%;}  
+.tb_2   {float:left; padding:5px;}  
+</style> 
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="header" class="uh bc-text-head ub bc-head head-p">
+            <div class="nav-btn" id="nav-left">
+                <div class="fa fa-angle-left fa-2x"></div>
+            </div>
+            <h1 id="title" class="ut ub-f1 ulev-3 ut-s tx-c" >IPRNAN排障</h1>
+            <div class="nav-btn nav-bt" id="nav-right"></div>
+            <!--
+            <div class="nav-btn" id="nav-right">
+                <div class="ub-img icon-setting umw2 umh4"></div>
+            </div>
+            -->
+        </div>
+        <div id="content">
+            <iframe id="alarmOperatePage" style="width: 100%; height: 100%;border: none;" allowfullscreen="true"></iframe>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        $(document).ready(function() {
+        // appcan.ready(function() {
+            var titHeight = $('#header').offset().height;
+            var bodyHeight = $('body').offset().height;
+            $("#content").css('height', bodyHeight - titHeight);
+            
+            recorderOperate();
+            
+            var url = window.localStorage.getItem('iprnan_operate_url');
+            $("#alarmOperatePage").attr('src', url);
+        });
+        
+        function recorderOperate(){
+            $.ajax({
+                url : req.url.recordGoToIpRan,
+                type : 'GET',
+                dataType: 'json',
+                timeout:req.timeout,
+                data : {
+                    "param": JSON.stringify({
+                        "reportId": window.localStorage.getItem("report.sub.current.id"),
+                        "reportName": "跳转IPRNAN排障",
+                        "country": "",
+                        "dept": window.localStorage.getItem(req.locfield.userCity),
+                        "owerName": window.localStorage.getItem(req.locfield.useraccount),
+                        "appid": window.localStorage.getItem("appid"),
+                        "ownerId": ""
+                    })
+                },
+                success : function(ret) {
+                    console.log(ret)
+                },
+                error : function(e) {
+                    console.log(e);
+                }
+            });
+        }
+        
+        // 返回上一级的事件
+        var back = document.getElementById("nav-left");
+        back.onclick = function () {
+            window.history.back(-1);
+        }
+        // appcan.button(".nav-btn", "ani-act", function() {
+        //     if (this.id == "nav-left") {
+        //         appcan.window.close(-1);
+        //     }
+        // });
+        
+    </script>
+</html>

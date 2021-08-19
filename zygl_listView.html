@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg " tabindex="0">
+            <!--header开始-->
+            <div id="header0" class="uh ub">
+                 <div class='uc-a ub-f1 bc-head tx-c ulev-1'>按地市统计</div>
+                 <div class='ub-f1'>&nbsp;</div>
+                 <div class='uc-a ub-f1 bc-head tx-c ulev-1' id="headdate"></div>
+            </div>
+            <div id="header1" class="uh ub" style="background-color:#E1FFFF;height: 22px; ">
+            </div>
+            <!--header结束--><!--content开始-->
+            <div id="context" class="ub-f1 tx-l ">
+
+            </div>
+            <div id="content">
+            <!--内容 -->
+            </div>
+            <!--content结束-->
+
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            var date = new Date();
+            $('#headdate').html('20'+(date.getYear()-100)+'-'+(date.getMonth()+1)+'-'+date.getDate()+'');
+            var data = appcan.locStorage.getVal(req.locfield.resData);
+            if(data){
+                data = JSON.parse(data);
+                var columns = data.models;
+                var titleHtml="<div class='tx-c ulev-1' style='width:80px'>地市</div>";
+                //var titleHtml="<table width='100%' ><tr><td class='ub-f1 tx-c ulev-1'>地市</td>";
+                for (var i=0; i < columns.length; i++) {
+                    titleHtml+="<div class='ub-f1 tx-c ulev-1'>"+columns[i].modelDesc+"</div>";
+                };
+                // titleHtml+="</tr></table>";
+                $('#header1').html(titleHtml);
+                
+                var values = data.datas;
+                var html="";
+                // var html="<table width='100%'>";
+                for (var i=0; i < values.length; i++) {
+                    if(i!=0 && i%2==1){
+                        html+="<div class='ub' style='background-color:#E1FFFF;height: 22px;'>";
+                    }else{
+                        html+="<div class='ub' style='height: 22px;'>";
+                    }
+                    // html+="<tr>";
+                    for (var j=1; j < values[i].length; j++) {
+                        if(j==1){
+                            html+="<div class='tx-c ulev-1' style='width:85px'>"+values[i][j]+"</div>";    
+                            // html+="<td class='ub-f1 tx-c ulev-1' style='background-color:#E1FFFF'>"+values[i][j]+"</td>";    
+                        }else{
+                            html+="<div class='ub-f1 tx-c ulev-1'>"+values[i][j]+"</div>";
+                            // html+="<td class='ub-f1 tx-c ulev-1'>"+values[i][j]+"</td>";
+                        }
+                    }
+                    html+="</div>";
+                    // html+="</tr>";
+                }
+                // html+="</table>";
+                $('#context').html(html);
+            }
+            //var titHeight = $('#header0').offset().height+$('#header1').offset().height;
+            //var parenttop = appcan.locStorage.getVal(req.locfield.resViewHeaderHeight);
+            //titHeight+=parseInt(parenttop);
+            //appcan.frame.open("content", "listView_content.html", 0, titHeight);
+            //window.onorientationchange = window.onresize = function() {
+            //    appcan.frame.resize("content", 0, titHeight);
+            //}
+            appcan.initBounce();
+        });
+    </script>
+</html>

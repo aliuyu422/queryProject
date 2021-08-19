@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left"></div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">综合呈现</h1>
+                <div class="nav-btn nav-bt" id="nav-right">
+                    <div class="ub-img icon-exit umw2 umh4"></div>
+                </div>
+            </div>
+            <div style="width: 100%;height: 50;">&nbsp;</div>
+             <table width='100%' style='vertical-align:middle; text-align:center;'>
+             <td style="width: 33%">
+             <div class='metro ub-f1' data-name="zycx" data-url="report_list.html" onclick="report_list()">
+                 <img src="css/current_icon/icon_xunjian.png" height="65" width="65" />
+                 <div class="font-p">
+                     <font size="1.5">资源报表</font>
+                        </div> 
+             </div>
+             </td>
+             <td style="width: 33%">
+             <div class='metro ub-f1' data-name="zygl" data-url="zycx_index.html" onclick="zycx_index()">
+                 <img src="css/current_icon/icon_zyhc.png"  height="65" width="65"/>
+                 <div class="font-p">
+                     <font size="1.5">资源查询</font>
+                 </div>
+             </div>
+             </td>
+             <td style="width: 34%">&nbsp;</td>
+             </tr>
+            </table>
+            <!--header结束--><!--content开始-->
+            <!--content结束-->
+
+        </div>
+        <script src="js/req.js"></script>
+				<script src="kendo/js/jquery.min.js"></script>
+        <!-- <script src="js/appcan.js"></script> -->
+        <!-- <script src="js/appcan.control.js"></script> -->
+    </body>
+    <script>
+			// 点击资源报表
+			function report_list() {
+				var service = req.url.genReportsByPid + "0";
+				window.localStorage.setItem("report.current.service", service);
+				window.localStorage.setItem("report.current.title", "资源报表");
+				window.open('./report_list.html','_self');
+			}
+			// 点击资源查询
+			function zycx_index() {
+				window.open('./zycx_index.html','_self');
+			}
+        // appcan.ready(function() {
+        //     var titHeight = $('#header').offset().height;
+        // });
+        // appcan.button(".metro", "ani-act", function() {
+        //     var service = req.url.genReportsByPid + "0";
+        //     appcan.setLocVal("report.current.service", service);
+        //     appcan.setLocVal("report.current.title", "资源报表");
+        //     appcan.window.open($(this).data("name"), $(this).data("url"), 10);
+        // })
+        // appcan.button(".nav-btn", "btn-act", function() {
+        //     this.id == "nav-right" && uexWidgetOne.exit(0);
+        // });
+    </script>
+</html>

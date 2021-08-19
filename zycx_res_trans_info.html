@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <style>  
+.tb_1   {float:left;border-right:1px   solid   #FFFFFE; padding:5px;width: 35%;}  
+.tb_2   {float:left; padding:5px;}  
+</style> 
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div>
+            <!--内容 -->
+            <div class="sc-bg" id="listview">
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        appcan.ready(function() {
+            appcan.initBounce();
+        })
+        var setData = [];
+        var data = appcan.locStorage.getVal(req.locfield.resItemTransInfo);
+        if(data){
+            data = (JSON.parse(data)).attrList;
+            if(data && data != null && data != undefined && data != "")
+            {
+                for (var i=0; i < data.length; i++) {
+                  setData.push({
+                      //title:data[i].attributeCnName +"&nbsp;&nbsp;|&nbsp;&nbsp;"+ data[i].attributeValue
+                      describe : "<div class=\"width:100%\"><div class=\"tb_1\">"+data[i].attributechname+"</div><div class=\"tb_2\">"+data[i].attributevalue+"</div></div>"
+                  });
+                }
+            }
+            
+        }
+        var lv1 = appcan.listview({
+            selector : "#listview",
+            type : "thickLine",
+            hasIcon : true,
+            hasAngle : false,
+            hasSubTitle : true,
+            multiLine : 1,
+            hasCheckbox : false,
+            align : 'left'
+        });
+        lv1.set(setData);
+    </script>
+</html>

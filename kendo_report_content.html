@@ -1,0 +1,320 @@
+<!-- <!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+
+        <link rel="stylesheet" href="kendo/css/kendo.common.min.css">
+        <link rel="stylesheet" href="kendo/css/kendo.bootstrap.min.css">
+        <link rel="stylesheet" href="kendo/css/kendo.mobile.all.min.css">
+        <style>
+
+     .fixed-header {
+        top:0;
+        position:fixed;
+        width:auto;
+        z-index: 1;
+      }
+      .k-grid tr td {
+          word-break: break-all;
+      }
+    </style>
+    </head>
+
+    <body class="um-vp bc-bg" ontouchstart>
+
+        <div id="grid"></div>
+
+        <script src="js/ajaxhook.min.js"></script>
+        <script src="js/req.js"></script>
+<!--        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script> -->
+
+        <script src="kendo/js/jquery.min.js"></script>
+        <script src="kendo/js/kendo.all.min.js"></script>
+
+        <script src="kendo/js/cultures/kendo.culture.zh.min.js"></script>
+        <script src="kendo/js/messages/kendo.messages.zh-CN.min.js"></script>
+        <script src="js/moment/moment.js"></script>
+    </body>
+    <script>
+        var service = "";
+        var id = "";
+        //var dataSource = null;
+        var readUrl = "";
+        var reportDefine = {};
+					$(document).ready(function() {
+						
+            req.ajax_hook(window.localStorage.getItem("report.current.id"), window.localStorage.getItem("report.current.title"));
+            
+            // uexWindow.toast(1, 5, "正在获取报表数据...", 60000);
+            window.localStorage.setItem("report.chart.countEnd","false");
+            // appcan.window.publish('report.chart.countCallback', '');
+            kendo.culture("zh_CN");
+            service = window.localStorage.getItem("report.current.service");
+            id = window.localStorage.getItem("report.current.id");
+            initGrid(function(){
+							refreshData();
+						});
+						
+            // appcan.window.subscribe('2',refreshData); 
+            //禁止响应控件滑动事件
+            // uexWindow.setMultilPopoverFlippingEnbaled(1);
+            
+            // $(document.body).css("padding-top",$("#grid > .k-grid-header").height());
+//             var w = $("#grid.k-grid-header-wrap").width();
+//             $(window).scroll(function(){
+//                  $("#grid .k-grid-header").css("margin-left", - $(window).scrollLeft());
+                 // $("#grid .k-grid-header").css("padding-top",288);
+            //});
+
+        });
+
+        function refreshData() {
+            // uexWindow.toast(1, 5, "正在获取报表数据...", 60000);
+            window.localStorage.setItem("report.chart.countEnd","false");
+            // appcan.window.publish('report.chart.countCallback', '');
+            var dateType = window.localStorage.getItem("report.parameter.datetype");
+            var selCity = window.localStorage.getItem("report.parameter.city");
+            var beginDate = window.localStorage.getItem("report.parameter.begindate");
+            var endDate = window.localStorage.getItem("report.parameter.enddate");
+            var selSiteInfo = window.localStorage.getItem("report.parameter.siteInfo");
+            if(dateType == "M")
+            {
+                beginDate = beginDate.substring(0,7);
+            }
+            if(selCity == undefined || selCity == null || selCity == "省公司")
+            {
+                selCity = "";
+            }
+            var queryParam = {
+                city_id: selCity,
+                country: selCity,
+                date_type: dateType,
+                start_date: beginDate,
+                end_date: endDate,
+                info1: selSiteInfo,
+                is_init_load: false 
+            };
+            
+            window.localStorage.setItem("report.parameter.isinitload", 'false');
+            
+            var query = JSON.stringify(queryParam);
+            //var query = "{'city_id':'" + selCity + "','country':'" + selCity + "','date_type':'" + dateType + "','start_date':'" + beginDate + "','end_date':'" + endDate + "'}";
+
+            /* 这样刷新没有动静 因此只有清空重新加载
+             dataSource.transport.read.url = readUrl.split("?")[0];
+             //console.log(dataSource.transport.read.url);
+             //dataSource.fetch();
+             dataSource.read({
+             param: query
+             });
+
+             var grid = $("#grid").data("kendoGrid")
+             grid.refresh();*/
+
+            $('#grid').empty();
+						var readUrl = window.localStorage.getItem("readUrltest");
+						var reportDefine = JSON.parse(window.localStorage.getItem("reportDefine"));
+            // readUrl = reportDefine.rptTable.servicename;
+            readUrl = readUrl.replace('113.59.110.83:9002','10.21.16.51:9002');
+            //alert(readUrl.split("?")[0]);
+            // console.log(readUrl.split("?")[0]);
+            // readUrl = "http://10.21.16.51:9002/hnappservice/api/report/getAlarmRecordOfTowncount"
+            //ces
+            // readUrl = "http://10.21.16.51:9002/hnappservice/api/report/getYdwdzNowcount?param={%22city_id%22:%221%22,%22date_type%22:%22M%22,%22start_date%22:%222016-03%22}";
+            var config = {
+                transport : {
+                    read : {
+                        url : readUrl + "?param=" + query,
+                        type : "get",
+                        dataType : "json"
+                    }
+                },
+                serverPaging : reportDefine.kendoGrid.serverPaging,
+                serverFiltering : reportDefine.kendoGrid.serverFiltering,
+                serverSorting : reportDefine.kendoGrid.serverSorting
+            };
+            if(reportDefine.kendoGrid.pageable)
+            {
+                config.pageSize = reportDefine.kendoGrid.pageSize;
+                config.schema = {
+                    data: "dataList",
+                    total: "iTotalRecords"
+                };
+            }
+            var dataSource = new kendo.data.DataSource(config);
+            
+            var columns = [];
+            for (var i = 0; i < reportDefine.kendoGrid.listColumns.length; i++) {
+                var columnDef = reportDefine.kendoGrid.listColumns[i];
+                columns.push({
+                    field : columnDef.field,
+                    title : columnDef.title,
+                    type : columnDef.type,
+                    locked : (columnDef.islock == "1"),
+                    width : columnDef.width + 'em',
+                    template : columnDef.template,
+                    fomat : columnDef.format,
+                    sortable: true
+                });
+            }
+            $("#grid").kendoGrid({
+                dataSource : dataSource,
+                columns : columns,
+                dataBound: onDataBound,
+                sortable : reportDefine.kendoGrid.sortable,
+                filterable : reportDefine.kendoGrid.filterable,
+                pageable : reportDefine.kendoGrid.pageable,
+                messages : {
+                    noRecords : "没有查询到数据."
+                }
+
+            });
+        }
+       function onDataBound() {
+           window.localStorage.setItem("report.chart.countEnd","true");
+           // uexWindow.closeToast();
+            var wrapper = this.wrapper,
+                header = wrapper.find(".k-grid-header");
+                footer = wrapper.find(".k-grid-header-wrap k-auto-scrollable");
+            function resizeFixed() {
+              var paddingRight = parseInt(header.css("padding-right"));
+              header.css("width", wrapper.width() - paddingRight);
+            }
+    
+            function scrollFixed() {
+              var offset = $(this).scrollTop();
+                  tableOffsetTop = wrapper.offset().top;
+                  tableOffsetBottom = tableOffsetTop + wrapper.height() - header.height();
+              if(offset == 0) {
+                header.removeClass("fixed-header");
+              } else if(offset >= tableOffsetTop && offset <= tableOffsetBottom) {
+                header.addClass("fixed-header");
+              }
+            }
+    
+            resizeFixed();
+            $(window).resize(resizeFixed);
+            $(window).scroll(scrollFixed);
+      }
+      
+        function initGrid(callback) {
+					console.log(req.url.genReport);
+            $.ajax({
+                type : "GET",
+                url : req.url.genReport + id,
+                dataType : "json",
+                success : function(data) {
+                    reportDefine = data;
+                    readUrl = reportDefine.rptTable.servicename;
+                    // readUrl = readUrl.replace('113.59.110.83:9002','10.21.16.51:9002');
+                    //测试
+                    // readUrl = readUrl.replace('113.59.110.83:9002','10.21.16.51:9002');
+                     // readUrl ="http://10.21.16.51:9002/hnappservice/api/report/getAlarmRecordOfTowncount?param={%22city_id%22:%221%22,%22date_type%22:%22M%22,%22start_date%22:%222016-03%22}"
+                    // readUrl = "http://10.21.16.51:9002/hnappservice/api/report/getYdwdzNowcount?param={%22city_id%22:%221%22,%22date_type%22:%22M%22,%22start_date%22:%222016-03%22}";
+                    //初始加载的默认参数：用户所属地市、当前月
+                    var date = new Date;
+                    var year = date.getFullYear();
+                    var month = parseInt(date.getMonth()) + 1;
+                    var dateType = "M";
+                    var selCity = appcan.getLocVal(req.locfield.userCity);
+                    var monthStr = month;
+                    if(month < 10)
+                    {
+                        monthStr = "0" + month;
+                    }
+                    var beginDate = year + "-" + monthStr;
+                    var endDate = "";
+                    if(selCity == undefined || selCity == null || selCity == "省公司")
+                    {
+                        selCity = "";
+                    }
+                    if(id == 5){
+                        dateType = "D";
+                        beginDate = moment().add(-14, 'd').format('YYYY-MM-DD');
+                        endDate = moment().format('YYYY-MM-DD')
+                    }
+                    var siteInfo1 = "高铁";
+                    if(id == 3330){
+                        siteInfo1 = "D类农村";
+                    }
+                    var queryParam = {
+                        city_id: selCity,
+                        country: selCity,
+                        date_type: dateType,
+                        start_date: beginDate,
+                        end_date: endDate,
+                        info1: siteInfo1,
+                        is_init_load: true 
+                    };
+                    window.localStorage.setItem("report.parameter.isinitload", 'true');
+                    window.localStorage.setItem("report.parameter.siteInfo", siteInfo1);
+                    window.localStorage.setItem("report.parameter.datetype", dateType);
+                    window.localStorage.setItem("report.parameter.begindate", beginDate);
+                    window.localStorage.setItem("report.parameter.enddate", endDate);
+                    
+                    var query = JSON.stringify(queryParam);
+            
+                     var config = {
+                        transport : {
+                            read : {
+                                url : readUrl.split("?")[0] + "?param=" + query,
+                                type : "get",
+                                dataType : "json"
+                            }
+                        },
+                        pageSize : reportDefine.kendoGrid.pageSize,
+                        serverPaging : reportDefine.kendoGrid.serverPaging,
+                        serverFiltering : reportDefine.kendoGrid.serverFiltering,
+                        serverSorting : reportDefine.kendoGrid.serverSorting
+                    };
+                    if(reportDefine.kendoGrid.pageable)
+                    {
+                        config.schema = {
+                            data: "dataList",
+                            total: "iTotalRecords"
+                        };
+                    }
+                    var dataSource = new kendo.data.DataSource(config);
+                    var columns = [];
+                    for (var i = 0; i < reportDefine.kendoGrid.listColumns.length; i++) {
+                        var columnDef = reportDefine.kendoGrid.listColumns[i];
+                        columns.push({
+                            field : columnDef.field,
+                            title : columnDef.title,
+                            type : columnDef.type,
+                            locked : (columnDef.islock == "1"),
+                            width : columnDef.width + 'em',
+                            template : columnDef.template,
+                            fomat : columnDef.format
+                        });
+                    }
+                    $("#grid").kendoGrid({
+                        dataSource : dataSource,
+                        columns : columns,
+                        dataBound: onDataBound,
+                        sortable : reportDefine.kendoGrid.sortable,
+                        filterable : reportDefine.kendoGrid.filterable,
+                        pageable : reportDefine.kendoGrid.pageable,
+                        messages : {
+                            noRecords : "没有查询到数据."
+                        }
+                    });
+										if(callback)
+										{
+											callback();
+										}
+     
+                }
+            });
+        }
+    </script>
+</html> -->

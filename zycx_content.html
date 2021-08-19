@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <form>
+            <table width="100%" style="padding: 25px">
+                <tr>
+                    <td><font size="2">资源类型</font></td>
+                    <td>
+                    <div id="restypesel" class="select uba bc-border bc-text">
+                        <div class="text">
+                            请选择
+                        </div>
+                        <div class="icon"></div>
+                        <select id="nettypesel_">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div></td>
+                </tr>
+                <tr>
+                    <td><font size="2">所属分公司</font></td>
+                    <td>
+                    <div id="citysel" class="select uba bc-border bc-text">
+                        <div class="text">
+                            请选择
+                        </div>
+                        <div class="icon"></div>
+                        <select id="citysel_">
+                            <option value="0">请选择</option>
+                        </select>
+                    </div></td>
+                </tr>
+                <tr>
+                    <td><font size="2">资源名称</font></td>
+                    <td>
+                    <div class="ub ub-ac ubb umh5 bc-border ">
+                        <div class=" uinput ub ub-f1">
+                            <input placeholder="请输入资源名称" id="reszh_label" name="reszh_label" type="text" class="ub-f1">
+                        </div>
+                    </div></td>
+                </tr>
+            </table>
+            <div class="uinn">
+                <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1"  id="submit">
+                    <div class="uinn3 fa fa-shield umh1 umw1"></div>
+                    查 询
+                </div>
+                <button type="submit"class="uinvisible"></button>
+                <!--
+                <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1"  id="submit2">
+                <div class="uinn3 fa fa-shield umh1 umw1"></div>
+                二维码
+                </div>
+                </div>
+                <button class="uinvisible"></button>
+                -->
+
+        </form>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        var nettypeObj = appcan.locStorage.getVal(req.locfield.nettypeObj);
+        var cityObj = appcan.locStorage.getVal(req.locfield.cityObj);
+        
+        appcan.ready(function() {
+            appcan.initBounce();
+            //初始化数据，获取专业，资源类型，和地市数据
+            if (!nettypeObj) {
+                var usercount = appcan.locStorage.getVal(req.locfield.useraccount);
+                usercount='test';
+                current.resListInfo.initCondition({
+                    'useraccount' : usercount
+                }, function(data) {
+                    nettypeObj = data.classList;
+                    cityObj = data.cityList;                  
+                    appcan.locStorage.setVal(req.locfield.nettypeObj, nettypeObj);
+                    //设置本地储存
+                    appcan.locStorage.setVal(req.locfield.cityObj, cityObj);
+                    //设置本地储存
+                    // setprofessdata();
+                    setnettypedata();
+                   setcitydata();
+                }, function() {
+                    appcan.window.alert('错误', '访问超时1');
+                });
+            } else {
+                // professObj = JSON.parse(professObj);
+                nettypeObj = JSON.parse(nettypeObj);
+                cityObj = JSON.parse(cityObj);
+                //setprofessdata();
+                setnettypedata();
+                setcitydata();
+            }
+        })
+        function reload() {
+            //var professObj = appcan.locStorage.getVal(req.locfield.professObj);
+            var cityObj = appcan.locStorage.getVal(req.locfield.cityObj);
+            //professObj = JSON.parse(professObj);
+            cityObj = JSON.parse(cityObj);
+            //setprofessdata();
+            setcitydata();
+        }
+
+        //var professselval;
+        var restypeselval;
+        var cityselval;
+        /** 为每个下拉列表添加select监听**/
+        // appcan.select("#professsel",function(ele,value){
+        // professselval = value;
+        // setnettypedata(value);
+        // });
+        appcan.select("#restypesel", function(ele, value) {
+            restypeselval = value;
+        });
+        appcan.select("#citysel", function(ele, value) {
+            cityselval = value;
+        });
+        /** 查询事件*/
+        appcan.button('#submit', 'ani-act', function() {
+            if (!restypeselval || restypeselval == '0') {
+                appcan.window.alert('提示', '请选择资源类型');
+                return;
+            }
+            if (!cityselval || cityselval == '0') {
+                appcan.window.alert('提示', '请选择分公司');
+                return;
+            }
+            appcan.locStorage.setVal(req.locfield.resclassname, restypeselval);
+            var param = current.resListInfo.reqparam.set(restypeselval, $('#reszh_label').val(),  0, 10, cityselval);
+            current.resListInfo.setReqParam(param);
+            current.resListInfo.load(false, function() {
+                appcan.window.open("res_listView", "zycx_res_listView.html", 1, 0);
+            }, null);
+        });
+        /** 二维码事件*/
+        //appcan.button('#submit2','ani-act',function(){
+        //    uexScanner.open();
+        //});
+        //设置专业的数据
+        function setprofessdata() {
+            var professsel_ = document.getElementById('professsel_');
+            for (var i = 0; i < professObj.length; i++) {
+                professsel_.options.add(new Option(professObj[i].resClassDiagramCnName, professObj[i].resClassDiagramID));
+            };
+        }
+
+        //设置资源类型的数据
+        function setnettypedata() {
+            var nettypesel_ = document.getElementById('nettypesel_');
+            nettypesel_.options.length = 0;
+            nettypesel_.options.add(new Option('请选择', 0));
+            for (var i = 0; i < nettypeObj.length; i++) {
+                nettypesel_.options.add(new Option(nettypeObj[i].NETYPECNNAME, nettypeObj[i].NETYPENAME));
+            }
+            //$("#nettypesel_").val(0);
+            //nettypesel_.options[0].selected = true;
+        }
+
+        //设置资源类型的数据
+        function setcitydata() {
+            var citysel_ = document.getElementById('citysel_');
+            for (var i = 0; i < cityObj.length; i++) {
+                //citysel_.options.add(new Option(cityObj[i].CITY_NAME, cityObj[i].CITY_NAME));
+                citysel_.options.add(new Option(cityObj[i].CITYNAME, cityObj[i].CITYNAME));
+            };
+        }
+
+    </script>
+</html>

@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="kendo/css/kendo.common.min.css">
+        <link rel="stylesheet" href="kendo/css/kendo.bootstrap.min.css">
+        <link rel="stylesheet" href="kendo/css/kendo.mobile.all.min.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+             <div id="header" class="uh bc-text-head ub bc-head head-p">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 id="title" class="ut ub-f1 ulev-3 ut-s tx-c" >报表</h1>
+                <div class="nav-btn nav-bt" id="nav-right"></div>
+                <!--
+                <div class="nav-btn" id="nav-right">
+                    <div class="ub-img icon-setting umw2 umh4"></div>
+                </div>
+                -->
+            </div>
+            <div id="content" class="um-vp bc-bg">
+                <div id="grid"></div>
+            </div>
+        </div>
+        <script src="js/ajaxhook.min.js"></script>
+        <script src="js/req.js"></script>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+
+        <script src="kendo/js/jquery.min.js"></script>
+        <script src="kendo/js/kendo.all.min.js"></script>
+
+        <script src="kendo/js/cultures/kendo.culture.zh.min.js"></script>
+        <script src="kendo/js/messages/kendo.messages.zh-CN.min.js"></script>
+    </body>
+    <script>
+        var count = 0;
+        var setIntervalId = null;
+        $(document).ready(function(){
+        // appcan.ready(function() {
+            // appcan.window.subscribe('report.sub.countCallback',countLoading);
+            //var titHeight = 0;
+            var titHeight = $('#header').offset().height;
+            // var title = appcan.getLocVal("report.sub.current.title");
+            var title = window.localStorage.getItem("report.sub.current.title");
+            $("#title").html(title);
+            // $("#content").html("1121312");
+            // initReportDefine();
+            reload();
+            window.onorientationchange = window.onresize = function () {
+                //appcan.frame.resize("content", 0, top);
+                // uexWindow.setMultiPopoverFrame("content", 0, top);
+                //uexWindow.reload();
+            }
+            // countLoading();
+            // appcan.frame.open("kendo_report_content_sub", "kendo_report_content_sub.html", 0, titHeight);
+            // window.onorientationchange = window.onresize = function() {
+            //     appcan.frame.resize("kendo_report_content_sub", 0, titHeight);
+            // }
+        });
+        
+        var service = "";
+        var id = "";
+        var reportDefine = {};
+        var selCity = "";
+        var channelId = "hn_zhcx";
+        var listColumnsData = [];
+        $(document).ready(function() {
+        // appcan.ready(function() {
+            
+            req.ajax_hook(window.localStorage.getItem("report.sub.current.id"), window.localStorage.getItem("report.sub.current.title"));
+            
+            // uexWindow.toast(1, 5, "正在获取数据...", 60000);
+            window.localStorage.setItem("report.sub.countEnd","false");
+            // appcan.window.publish('report.sub.countCallback', '');
+            kendo.culture("zh_CN");
+            // service = window.localStorage.getItem("report.sub.current.service");
+            id = window.localStorage.getItem("report.sub.current.id");
+            initGrid();
+            window.localStorage.setItem("curchannelid",channelId);
+            // appcan.window.subscribe(channelId,reload);
+            //appcan.window.subscribe('2',refreshData);
+        });
+        
+        function reload(){
+            initGrid();
+        }
+
+        // 返回上一级的事件
+        var back = document.getElementById("nav-left");
+        back.onclick = function () {
+            window.history.back(-1);
+        }
+
+        function refreshData() {
+            // uexWindow.toast(1, 5, "正在获取数据...", 60000);
+            window.localStorage.setItem("report.sub.countEnd","false");
+            // appcan.window.publish('report.sub.countCallback', '');
+            var dateType = window.localStorage.getItem("report.parameter.datetype");
+            selCity = window.localStorage.getItem("report.sub.parameter.city");
+            var beginDate = window.localStorage.getItem("report.parameter.begindate");
+            var endDate = window.localStorage.getItem("report.parameter.enddate");
+            var selSiteInfo = window.localStorage.getItem("report.parameter.siteInfo");
+            var isinitload = window.localStorage.getItem("report.parameter.isinitload");
+            
+            if(dateType == "M")
+            {
+                beginDate = beginDate.substring(0,7);
+            }
+            if(selCity == undefined || selCity == null || selCity == "省公司")
+            {
+                selCity = "";
+            }
+            var initLoad = false;
+            if(isinitload == 'true')
+            {
+                initLoad = true;
+            }
+            
+            var queryParam = {
+                city_id: selCity,
+                country: selCity,
+                date_type: dateType,
+                start_date: beginDate,
+                end_date: endDate,
+                info1: selSiteInfo,
+                is_init_load: initLoad 
+            };
+            
+            var query = JSON.stringify(queryParam);
+            $('#grid').empty();
+
+            var readUrl = reportDefine.rptTable.servicename;
+            readUrl = readUrl.replace('113.59.110.83:9002','10.21.16.51:9002');
+            //测试
+            // readUrl = readUrl.replace('113.59.110.83:9002','10.21.16.51:9002');
+            // var readUrl = "http://10.21.16.51:9002/hnappservice/api/report/getXdzNowdetail?param={%22city_id%22:%221%22,%22date_type%22:%22M%22,%22start_date%22:%222016-03%22}";
+            // var readUrl = "http://10.21.16.51:9002/hnappservice/api/report/getXdzNowdetail?param={%22city_id%22:%221%22,%22date_type%22:%22M%22,%22start_date%22:%222016-03%22}";
+            //url : readUrl.split("?")[0] + "?param=" + query,
+            var config = {
+                transport : {
+                    read : {
+                        url : readUrl.split("?")[0] + "?param=" + query,
+                        type : "get",
+                        dataType : "json"
+                    }
+                },
+                pageSize : reportDefine.kendoGrid.pageSize,
+                serverPaging : true,
+                serverFiltering : reportDefine.kendoGrid.serverFiltering,
+                serverSorting : reportDefine.kendoGrid.serverSorting
+            };
+            if(reportDefine.kendoGrid.pageable)
+            {
+                config.schema = {
+                    data: "dataList",
+                    total: "iTotalRecords"
+                };
+            }
+            var dataSource = new kendo.data.DataSource(config);
+            // dataSource.fetch(function() {
+              // var view = dataSource.view();
+              // console.log(view); // displays "John Doe"
+            // });
+            var columns = [];
+            for (var i = 0; i < reportDefine.kendoGrid.listColumns.length; i++) {
+                var columnDef = reportDefine.kendoGrid.listColumns[i];
+                columns.push({
+                    field : columnDef.field,
+                    title : columnDef.title,
+                    type : columnDef.type,
+                    locked : (columnDef.islock == "1"),
+                    width : columnDef.width + 'em',
+                    template : columnDef.template,
+                    fomat : columnDef.format
+                });
+            }
+            // console.log(columns);
+            $("#grid").kendoGrid({
+                dataSource : dataSource,
+                columns : columns,
+                dataBound: onDataBound,
+                sortable : reportDefine.kendoGrid.sortable,
+                filterable : reportDefine.kendoGrid.filterable,
+                pageable : reportDefine.kendoGrid.pageable,
+                messages : {
+                    noRecords : "没有查询到数据."
+                }
+            });
+            //dataSource.fetch();
+        }
+        function onDataBound() {
+            // uexWindow.closeToast();
+            window.localStorage.setItem("report.sub.countEnd","true");
+            var wrapper = this.wrapper,
+                header = wrapper.find(".k-grid-header");
+                footer = wrapper.find(".k-grid-header-wrap k-auto-scrollable");
+            function resizeFixed() {
+              var paddingRight = parseInt(header.css("padding-right"));
+              header.css("width", wrapper.width() - paddingRight);
+            }
+    
+            function scrollFixed() {
+              var offset = $(this).scrollTop();
+                  tableOffsetTop = wrapper.offset().top;
+                  tableOffsetBottom = tableOffsetTop + wrapper.height() - header.height();
+              if(offset == 0) {
+                header.removeClass("fixed-header");
+              } else if(offset >= tableOffsetTop && offset <= tableOffsetBottom) {
+                header.addClass("fixed-header");
+              }
+            }
+    
+            resizeFixed();
+            $(window).resize(resizeFixed);
+            $(window).scroll(scrollFixed);
+      }
+
+        function initGrid() {
+            $.ajax({
+                type : "GET",
+                url : req.url.genReport + id,
+                dataType : "json",
+                success : function(data) {
+                    // uexWindow.closeToast();
+                    reportDefine = data;
+                    listColumnsData = reportDefine.kendoGrid.listColumns;
+                    refreshData();
+                }
+            });
+        }
+        $("#grid").on("click", "td", function (e){
+            var row = $(this).closest("tr");
+            var rowIdx = $("tr", grid.tbody).index(row);
+            var colIdx = $("td", row).index(this);
+            var item = $("#grid").data("kendoGrid").dataItem(row);
+            if (id == "61" || id=="4051" || id == "4075" || id == "19" || id =="5066") {
+                var serialno = item.SERIALNO;
+                var country = item.COUNTY;
+                window.localStorage.setItem("serialno",serialno);
+                window.localStorage.setItem("country",country);
+                window.localStorage.setItem("reasonType",id);
+                // appcan.window.open({
+                //    name:"reason_index",
+                //    data:"reason_index.html",
+                //    aniId :'10' 
+                // });
+                window.open("reason_index.html");
+            };
+            if(id == "4079" || id == "5042" || id == "5051" || id == "5053" || id == "5049" || id == "5041"){
+                window.localStorage.setItem('iprnan_alarm_current_id', id);
+                window.localStorage.setItem('iprnan_alarm_info', JSON.stringify(item));
+                window.localStorage.setItem('iprnan_alarm_column_info', JSON.stringify(listColumnsData));
+                window.localStorage.setItem('iprnan_alarm_ne', item.NENAME ? item.NENAME : "");
+                // appcan.window.open({
+                //    name:"iprnan_alarm_detail",
+                //    data:"iprnan_alarm_detail.html",
+                //    aniId :'10' 
+                // });
+                window.open("iprnan_alarm_detail.html");
+            }
+        });
+
+
+
+
+
+        function countLoading(){
+            if(!setIntervalId){
+                setIntervalId = setInterval(function(){
+                    // var countEnd = appcan.getLocVal("report.sub.countEnd");
+                    var countEnd = window.localStorage.getItem("report.sub.countEnd");
+                    if(countEnd == 'true'){
+                        $("#nav-right").html("");
+                        count = 0;
+                        clearInterval(setIntervalId);
+                        setIntervalId = null;
+                    }else{
+                        count++;
+                        $("#nav-right").html(count);
+                    }
+                }, 1000);
+            }
+        }
+ </script>
+</html>

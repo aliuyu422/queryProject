@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left"  >
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">资源详情</h1>
+                <div class="nav-btn" id="nav-right">
+                </div>
+            </div>
+            <div id="tabview" class="uf sc-bg ubb bc-border">
+            </div>
+            <div id="content" class="ub-f1 tx-l">
+            </div>
+        </div>
+        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.tab.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+    var tabview = appcan.tab({
+        selector : "#tabview",
+        hasIcon : false,
+        hasAnim : true,
+        hasLabel : true,
+        hasBadge : false,
+        data : [{
+            label : "资源详情"
+        }, {
+            label : "告警信息"
+        }, {
+            label : "传输信息"
+        }]
+    });
+    tabview.on("click",function(obj, index){ /*TAB变更时切换多浮动窗口*/
+        appcan.window.selectMultiPopover("content",index);
+    })
+    appcan.button(".nav-btn", "btn-act", function() {
+        this.id == "nav-left" && appcan.window.close(-1);
+    })
+    appcan.ready(function() {
+        initData();
+        var top = $('#header').offset().height + $('#tabview').offset().height;
+        window.onorientationchange = window.onresize = function() {
+            //appcan.frame.resize("content", 0, top);
+            uexWindow.setMultiPopoverFrame("content",0,top);
+            //uexWindow.reload();
+        }
+    });
+    
+    /**
+     *页面初始化数据查询 
+     */
+    function initData(){
+        var resclassname = appcan.locStorage.getVal(req.locfield.resclassname);
+        var int_id = appcan.locStorage.getVal(req.locfield.resItemId);
+        var resCode = appcan.locStorage.getVal(req.locfield.resCode);
+        var resName = appcan.locStorage.getVal(req.locfield.resItemName);
+        var param = {'resClassName':resclassname,'int_id':int_id};
+        if(resCode){
+            param = {'code':resCode};
+        }
+        current.resListInfo.queryAttrObjectById(param,function(data){
+            buildTabFrame();
+        },function(){});
+        
+        //查询传输信息
+        var paramTrans = {'bbu_name1':resName};
+        current.resListInfo.transQueryInfoByName(paramTrans,function(data){
+        },function(){
+        });
+    }
+    
+    function buildTabFrame(){
+        var top = $('#header').offset().height + $('#tabview').offset().height;
+        // uexWindow.openMultiPopover({
+            // id : "content",
+            // url : [{
+                // "inPageName" : "detailinfo",
+                // "inUrl" : "zycx_res_detail_info.html",
+            // }, {
+                // "inPageName" : "unreslist",
+                // "inUrl" : "zycx_res_unListView.html",
+            // }],
+            // top : top,
+            // left : 0,
+            // index : 0,
+            // change:function(index,res){ /*浮动窗口推拽变更时回调，可控制tab进行同步变更*/
+                // tabview.moveTo(res.multiPopSelectedIndex);
+            // }
+        // });
+        appcan.frame.open({/*创建多浮动窗口*/
+            id : "content",
+            url : [{
+                "inPageName" : "detailinfo",
+                "inUrl" : "zycx_res_detail_info.html",
+            },{
+                "inPageName" : "unreslist",
+                "inUrl" : "zycx_res_unListView.html",
+            },{
+                "inPageName" : "transdetailinfo",
+                "inUrl" : "zycx_res_trans_info.html",
+            } ],
+            top : top,
+            left : 0,
+            index : 0,
+            change:function(index,res){ /*浮动窗口推拽变更时回调，可控制tab进行同步变更*/
+                tabview.moveTo(res.multiPopSelectedIndex);
+            }
+        });
+    }
+    </script>
+</html>

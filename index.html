@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <!--
+        <style type="text/css">
+        body
+        {
+        background:  url(css/project/images/login_background.png) repeat fixed center;
+        }
+
+        </style>-->
+    </head>
+    <body class="um-vp bc-bg " >
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left"></div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">综合呈现</h1>
+                <div class="nav-btn nav-bt" id="nav-right"></div>
+            </div>
+            <div class="uinn ub ub-ac ub-pc">
+                <div class="logo ub-img umhw1"></div>
+            </div>
+
+            <div class="uinn ub ub-ac ub-pc ub-ver">
+                <div class="ulev0 t-blu addfont umar-t">
+
+                </div>
+                <div class="ulev1 t-blu addfont uinn"></div>
+            </div>
+            <div class="uinn ub ub-ac ub-pc ub-ver">
+                <div class="ulev0 t-blu addfont umar-t">
+
+                </div>
+                <div class="ulev1 t-blu addfont uinn"></div>
+            </div>
+            <div class="ub ub-ver ub-f1">
+                <form id="loginform">
+                    <div class="uba b-gra umar-a uc-a1 c-wh">
+                        <div class="ub ub-ac">
+                            <div class="umhw resuser ub-img umar-l"></div>
+                            <div class="fa fa-user sc-text" ></div>
+                            <div class="ub-f1 uinput uinn">
+                                <input placeholder="用户名" id="loginAccout" name="loginAccout" value="" type="text" class="uc-a1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="uba b-gra umar-a uc-a1 c-wh">
+                        <div class="ub ub-ac">
+                            <div class="umhw respwd ub-img umar-l"></div>
+                            <div class="fa fa-lock sc-text" ></div>
+                            <div class="ub-f1 uinput uinn">
+                                <input placeholder="密码" id="loginPwd" name="loginPwd" value="" type="password" class="uc-a1">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ub umar-a ub-ac">
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div class="checkbox umar-r">
+                            <input type="checkbox" name="isRemberPwd" id="isRemberPwdId" class="uabs ub-con">
+                        </div>
+                        <div class="lv_title ub-f1 marg-l ub ub-ver ut-m line1">
+                            记住密码
+                        </div>
+
+                    </div>
+                    <div class="uin uinn">
+                        <div class="btn ub ub-ac bc-text-head ub-pc bc-btn uc-a1" onclick="submit()">
+                            登　录
+                        </div>
+                    </div>
+
+                    <button type="submit" class="uinvisible" ></button>
+                </form>
+            </div>
+        </div>
+<!--        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script> -->
+        <!--<script src="js/md5.js"></script>-->
+				<script src="kendo/js/jquery.min.js"></script>
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        var flag = 0;
+        var isLoadByOtherApp = false;
+				
+        function login() {
+            //ajax   登陆验证
+            var userAccout = $("#loginAccout").val();
+            var userPassWord = $("#loginPwd").val();
+
+            var storage = window.localStorage;
+            //记住密码
+            if (document.getElementById("isRemberPwdId").checked) {
+                //存储到loaclStage
+
+                storage["name"] = userAccout;
+                storage["pwd"] = userPassWord;
+                storage["isstorePwd"] = "yes";
+            } else {
+                storage["name"] = userAccout;
+                storage["isstorePwd"] = "no";
+            }
+						
+						actionLogin(userAccout, userPassWord);
+        }
+				
+				function submit() {
+					login()
+				}
+				
+        function actionLogin(userAccout, userPassWord) {
+            req.req_func.login(userAccout, userPassWord, function(data) {
+                if (data.success == 'true') {
+									  // uni.setStorageSync(req.locfield.useraccount, userAccout);
+										// uni.setStorageSync(req.locfield.userCity, data.orgname);
+                    window.localStorage.setItem(req.locfield.useraccount, userAccout);
+                    window.localStorage.setItem(req.locfield.userCity, data.orgname);
+                    // var plat = uexWidgetOne.getPlatform();//0为iOS,1为Android
+										var plat = 0;
+                    if(plat == 0){
+											// uni.setStorageSync("appid", "82102");
+                        window.localStorage.setItem("appid", "82102");
+                    }else{
+											// uni.setStorageSync("appid", "82108");
+                        window.localStorage.setItem("appid", "82108");
+                    }
+										// plus.runtime.openWeb('http://127.0.0.1:8848/%E7%BB%BC%E5%90%88%E6%9F%A5%E8%AF%A2/itmeContent.html');
+										// window.location.href("http://127.0.0.1:8848/%E7%BB%BC%E5%90%88%E6%9F%A5%E8%AF%A2/itmeContent.html");
+                    window.open('./itmeContent.html','_self');
+                } else {
+                }
+            }, function(e) {
+
+            });
+        }
+
+    </script>
+</html>

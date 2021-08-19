@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+    </head>
+    <body class="um-vp" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left">
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 id="title" class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">资源报表</h1>
+                <div class="nav-btn nav-bt" id="nav-right"></div>
+            </div>
+            <div style="width: 100%;height: 50;">&nbsp;</div>
+            <table id="listtable" width='100%' style='vertical-align:middle; text-align:center;'>
+							<tbody id="listtable1"></tbody>
+            </table>
+            <!--header结束--><!--content开始-->
+            <!--content结束-->
+
+        </div>
+        <script src="js/ajaxhook.min.js"></script>
+        <script src="js/req.js"></script>
+				<script src="kendo/js/jquery.min.js"></script>
+<!--        <script src="js/appcan.js"></script>
+        <script src="js/appcan.control.js"></script> -->
+    </body>
+    <script>
+        // appcan.ready(function() {
+					$(document).ready(function(){
+						req.listArr = [];
+            // req.ajax_hook(appcan.getLocVal("report.current.id"), appcan.getLocVal("report.current.title"));
+						// req.ajax_hook(window.localStorage.getItem("report.current.id"), window.localStorage.getItem("report.current.title"));
+            var titHeight = $('#header').offset().height;
+            var service = window.localStorage.getItem("report.current.service");
+            var title = window.localStorage.getItem("report.current.title");
+            $("#title").html(title);
+            $.ajax({
+                type:"GET",
+                url: service,
+                dataType: "json",
+                success: function(data){
+                    for(var i=0; i < data.length; i++)
+                    {
+                        var rpt = data[i];
+                        if(i%3 == 0)
+                        {
+                            $("#listtable1").append("<tr>");
+                        }
+                        var htmlPage = "kendo_report.html";
+                        var service = "";
+                        if(rpt.is_subreport == "0")
+                        {
+                            htmlPage = "report_list.html";
+                            service = req.url.genReportsByPid + rpt.id;
+														clicktype = "thisPage";
+                        }
+                        else if(rpt.is_subreport == "1")
+                        {
+                            //htmlPage = "kendo_report.html";
+                            htmlPage = "report_chart_tabview.html";
+                            service = rpt.servicename;
+														clicktype = "turnPage";
+                        }
+												req.listArr.push({
+													name: rpt.chname,
+													htmlPage: htmlPage,
+													service: service,
+													id: rpt.id
+												});
+                        
+                        $("#listtable1").append("<td style='width: 33%' class='ly'>" + 
+                                               "<div class='metro ub-f1' data-name='" + rpt.chname + 
+                                               "' data-url='" + htmlPage + 
+                                               "' data-service='" + service + 
+                                               "' data-uid='" + rpt.id + 
+																							 "' onclick= '" + clicktype + "(" + rpt.id +")" +
+                                               "'>" + 
+                                               "<img src='css/current_icon/icon_xunjian.png' height='65' width='65' />" +
+                                               "<div class='font-p'>" +
+                                               "<font size='1.5'>" + rpt.chname + "</font>" +
+                                               "</div></div></td>");
+                        if(i == data.length - 1)
+                        {
+                            if(i%3 == 0)
+                            {
+                                $("#listtable1").append("<td style='width: 34%'>&nbsp;</td>");
+                                $("#listtable1").append("<td style='width: 34%'>&nbsp;</td>");
+                                $("#listtable1").append("</tr>");
+                            }
+                            else if(i%3 == 1)
+                            {
+                                $("#listtable1").append("<td style='width: 34%'>&nbsp;</td>");
+                                $("#listtable1").append("</tr>");
+                            }
+                        }
+                        if(i%3 == 2)
+                        {
+                            $("#listtable1").append("</tr>");
+                        }
+                    }
+										
+                    // appcan.button(".metro", "ani-act", function() {
+                    //     var service = $(this).data("service");
+                    //     var name = $(this).data("name");
+                    //     var id = $(this).data("uid");
+                    //     appcan.setLocVal("report.current.service", service);
+                    //     appcan.setLocVal("report.current.title", name);
+                    //     appcan.setLocVal("report.current.id", id);
+                    //     appcan.window.open("kendo_report_" + id, $(this).data("url"), 10);
+                    // });
+                }
+            });
+            
+            // appcan.button(".nav-btn", "ani-act", function() {
+            //     //appcan.clearLocVal("unusePortNum");
+            //     //appcan.clearLocVal("usedPortNum");
+            //     if (this.id == "nav-left") {
+            //         appcan.window.close(-1);
+            //     }
+            // });
+            //点击返回事件
+            var back = document.getElementById("nav-left");
+            back.onclick = function(){
+                    window.history.back(-1);
+            }
+        });
+				function turnPage(a) {
+				console.log(req.listArr);
+					for(var i=0;i<req.listArr.length; i++) {
+						if(a == req.listArr[i].id){
+							window.localStorage.setItem("report.current.service", req.listArr[i].service);
+							window.localStorage.setItem("report.current.title", req.listArr[i].name);
+							window.localStorage.setItem("report.current.id", req.listArr[i].id);
+							window.open('./'+ req.listArr[i].htmlPage,'_self');
+						}
+					}
+					// var service = $(this).data("service");
+					// var name = $(this).data("name");
+					// var id = $(this).data("uid");
+					// console.log(name);
+				}
+        function thisPage(a) {
+					for(var i=0;i<req.listArr.length; i++) {
+						if(a == req.listArr[i].id){
+							window.localStorage.setItem("report.current.service", req.listArr[i].service);
+							window.localStorage.setItem("report.current.title", req.listArr[i].name);
+							window.localStorage.setItem("report.current.id", req.listArr[i].id);
+							window.open('./'+ req.listArr[i].htmlPage,'_self');
+						}
+					}
+				}
+
+    </script>
+</html>

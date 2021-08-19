@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html class="um landscape min-width-240px min-width-320px min-width-480px min-width-768px min-width-1024px">
+    <head>
+        <title></title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <link rel="stylesheet" href="css/fonts/font-awesome.min.css">
+        <link rel="stylesheet" href="css/ui-box.css">
+        <link rel="stylesheet" href="css/ui-base.css">
+        <link rel="stylesheet" href="css/ui-color.css">
+        <link rel="stylesheet" href="css/appcan.icon.css">
+        <link rel="stylesheet" href="css/appcan.control.css">
+        <link rel="stylesheet" href="page_1_content/css/main.css">
+    </head>
+    <body class="um-vp bc-bg" ontouchstart>
+        <div id="page_0" class="up ub ub-ver bc-bg" tabindex="0">
+            <!--header开始-->
+            <div id="header" class="uh bc-text-head ub bc-head">
+                <div class="nav-btn" id="nav-left"  >
+                    <div class="fa fa-angle-left fa-2x"></div>
+                </div>
+                <h1 class="ut ub-f1 ulev-3 ut-s tx-c" tabindex="0">资源列表</h1>
+                <div class="nav-btn" id="nav-right">
+                </div>
+            </div>
+            <div class="ub ub-ver">
+                <div id="listview2"  class="ubt bc-border ubb c-wh umar-at1 uinn-a7">
+                </div>
+            </div>
+            <!--
+            <div class="uinput ub bc-border uba">
+            <div class="uinn fa fa-search sc-text"></div>
+            <input id="searchtext" placeholder="请输入搜索资源" type="text" class="ub-f1">
+            <div id="search" class="fa fa-refresh ulev2"></div>
+            </div>
+            -->
+        </div>
+        
+        <script src="js/appcan.js"></script>
+        <!-- <script src="js/appcan.control.js"></script>
+        <script src="js/appcan.listview.js"></script> -->
+        <script src="js/req.js"></script>
+    </body>
+    <script>
+        $(document).ready(function() {
+        // appcan.ready(function() {
+            //appcan.initBounce();
+            getList();
+            // appcan.window.setBounce(1 //0:是向下拖动,1: 是向上拖动
+            //     ,function(){} //开始滑动时触发回调
+            //     ,function(){ 
+                   
+            //     } //上拉或者下拉超过边界执行回调
+            //     ,function(){
+            //         current.resListInfo.load(true,function(data){
+            //            appcan.window.resetBounceView(1);
+            //            if(!data)return;
+            //            for (var i=0; i < data.length; i++) {
+            //               lv2.add([{
+            //                   title:data[i].ZH_NAME,
+            //                   int_id:data[i].INT_ID
+            //               }],1);
+            //            };
+            //        },null);
+            //     } //上拉或者下拉，超过边界之后，恢复最初状态执行回调
+            //     ,'' //如果超过了该边界显示的背景颜色
+            //     ,{});
+        })
+        function getList() {
+            var netypename = window.localStorage.getItem(req.locfield.resclassname);
+            var county = window.localStorage.getItem(req.locfield.cityselVal);
+            // $.ajax({
+            //     url : req.url.queryPage_ByName,
+            //     type : 'POST',
+            //     timeout: req.timeout,
+            //     data : {
+            //         param: '{"netypename":"'+ netypename +'","keyValue":"","pageStart":0,"pageSize":10,"county":"'+ county +'"}'
+            //     },
+            //     success : function(ret) {
+            //         // appcan.window.closeToast();
+            //         console.log(ret);
+            //     },
+            //     error : function(e) {
+            //         // appcan.window.closeToast();
+            //         console.log(e);
+            //     }
+            // });
+            current.resListInfo.load(true,function(data){
+                console.log(data);
+                   },null);
+        }
+        // var lv2 = appcan.listview({
+        //     selector : "#listview2",
+        //     type : "thinLine",
+        //     hasAngle : true,
+        //     multiLine : 2
+        // });
+        // lv2.on('click',function(obj ,data ,subObj ){
+        //     appcan.locStorage.setVal(req.locfield.resItemId,data.int_id);
+        //     appcan.locStorage.setVal(req.locfield.resCode,'');
+        //     appcan.locStorage.setVal(req.locfield.resItemName,data.title);
+        //     appcan.window.open("res_detail"+(new Date().getTime()),"zycx_res_detail.html",1,0);
+        // });
+        // var res_listdata = current.resListInfo.getData();
+        // if(res_listdata){
+        //     for (var i=0; i < res_listdata.length; i++) {
+        //       lv2.add([{
+        //           title:res_listdata[i].ZH_NAME,
+        //           int_id:res_listdata[i].INT_ID
+        //       }],1);
+        //     };
+        // }else{
+        //     lv2.set([]);
+        // }
+        // appcan.ready(function() {
+        //     var titHeight = $('#header').offset().height;
+        //     appcan.frame.open("res_listView_content", "zycx_res_listView_content.html", 0, titHeight);
+        //     window.onorientationchange = window.onresize = function() {
+        //         appcan.frame.resize("res_listView_content", 0, titHeight);
+        //     }
+        // })
+        // appcan.button(".nav-btn", "btn-act", function() {
+        //     this.id == "nav-left" && appcan.window.close(-1);
+        // })
+        // appcan.button("#search", "btn-act", function() {
+        //     var zhlabel = $('#searchtext').val();
+        //     if(!zhlabel){
+        //         zhlabel='';
+        //     }
+        //     uexWindow.evaluatePopoverScript('','res_listView_content','reload_data("'+zhlabel+'");');
+        // })
+    </script>
+</html>
